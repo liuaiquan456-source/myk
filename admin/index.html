@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>仪表盘 | MYK 管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body data-page="dashboard">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">MYK</div>
+      <div class="admin-logo-sub">管理后台</div>
+      <nav class="admin-nav">
+        <a href="index.html" class="active">仪表盘</a>
+        <a href="layout.html">页面布局</a>
+        <a href="products.html">商品管理</a>
+        <a href="categories.html">分类管理</a>
+        <a href="orders.html">订单管理</a>
+        <a href="languages.html">语言管理</a>
+        <a href="customers.html">客户管理</a>
+        <div class="view-site">
+          <a href="../index.html" target="_blank">查看前台 &rarr;</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <div>
+          <h1>仪表盘</h1>
+          <p>店铺内容总览</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="panel">
+          <h2>商品</h2>
+          <p style="font-size:2rem; font-weight:700;" id="statProducts">&mdash;</p>
+          <p style="color:var(--color-text-muted); font-size:0.85rem;">商品总数</p>
+          <div class="form-actions">
+            <a class="btn btn-sm" href="products.html">管理商品</a>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>分类</h2>
+          <p style="font-size:2rem; font-weight:700;" id="statCategories">&mdash;</p>
+          <p style="color:var(--color-text-muted); font-size:0.85rem;">分类总数</p>
+          <div class="form-actions">
+            <a class="btn btn-sm" href="categories.html">管理分类</a>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>订单</h2>
+          <p style="font-size:2rem; font-weight:700;" id="statOrders">&mdash;</p>
+          <p style="color:var(--color-text-muted); font-size:0.85rem;">已收到的订单数</p>
+          <div class="form-actions">
+            <a class="btn btn-sm" href="orders.html">查看订单</a>
+          </div>
+        </div>
+        <div class="panel full" style="grid-column: 1 / -1;">
+          <h2>首页布局</h2>
+          <p style="color:var(--color-text-muted); font-size:0.85rem;">编辑首页横幅内容，并管理各板块展示的商品系列。</p>
+          <div class="form-actions">
+            <a class="btn btn-sm" href="layout.html">管理布局</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    (async () => {
+      const [products, categories, orders] = await Promise.all([
+        api('/api/products'),
+        api('/api/categories'),
+        api('/api/orders'),
+      ]);
+      document.getElementById('statProducts').textContent = products.length;
+      document.getElementById('statCategories').textContent = categories.length;
+      document.getElementById('statOrders').textContent = orders.length;
+    })();
+  </script>
+</body>
+</html>

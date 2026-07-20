@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商品管理 | MYK 管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body data-page="products">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">MYK</div>
+      <div class="admin-logo-sub">管理后台</div>
+      <nav class="admin-nav">
+        <a href="index.html">仪表盘</a>
+        <a href="layout.html">页面布局</a>
+        <a href="products.html" class="active">商品管理</a>
+        <a href="categories.html">分类管理</a>
+        <a href="orders.html">订单管理</a>
+        <a href="languages.html">语言管理</a>
+        <a href="customers.html">客户管理</a>
+        <div class="view-site">
+          <a href="../index.html" target="_blank">查看前台 &rarr;</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <div>
+          <h1>商品管理</h1>
+          <p>上传商品，并将其分配到分类和首页展示板块</p>
+        </div>
+        <button class="btn" id="addProductBtn">+ 添加商品</button>
+      </div>
+
+      <div class="panel">
+        <div class="form-field" style="max-width:260px;">
+          <label>按分类筛选</label>
+          <select id="categoryFilter">
+            <option value="">全部分类</option>
+          </select>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>图片</th>
+              <th>名称</th>
+              <th>分类</th>
+              <th>价格</th>
+              <th>SKU数量</th>
+              <th>组合产品</th>
+              <th>库存数量</th>
+              <th>标签</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="productRows"></tbody>
+        </table>
+        <div class="empty-state" id="productEmpty" style="display:none;">暂无商品。</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit modal -->
+  <div class="modal-overlay" id="productModal">
+    <div class="modal">
+      <button type="button" class="modal-close" id="productModalClose" aria-label="关闭">&times;</button>
+      <h2 id="productModalTitle">添加商品</h2>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>名称</label>
+            <input type="text" id="productName" required>
+          </div>
+
+          <div class="form-field">
+            <label>价格（美元）</label>
+            <input type="number" step="0.01" min="0" id="productPrice" required>
+          </div>
+
+          <div class="form-field">
+            <label>分类</label>
+            <select id="productCategory" required></select>
+          </div>
+
+          <div class="form-field">
+            <label>标签</label>
+            <select id="productBadge">
+              <option value="none">无</option>
+              <option value="sale">促销</option>
+              <option value="low-stock">库存紧张</option>
+              <option value="sold-out">售罄</option>
+            </select>
+          </div>
+
+          <div class="form-field full">
+            <label>商品图片 <span style="font-weight:400; color:var(--color-text-muted);">（第一张为封面图 &mdash; 拖动缩略图可调整顺序）</span></label>
+            <div class="image-gallery" id="productImageGallery"></div>
+            <input type="file" id="productImageInput" accept="image/*" multiple>
+          </div>
+
+          <div class="form-field full">
+            <label>SKU 变体 <span style="font-weight:400; color:var(--color-text-muted);">（变体名称可自由编辑，每个变体可单独设置价格和图片）</span></label>
+            <div id="skuList"></div>
+            <button type="button" class="btn btn-sm btn-outline" id="addSkuBtn">+ 添加变体</button>
+            <datalist id="skuColorSuggestions">
+              <option value="Gold">
+              <option value="Silver">
+              <option value="Rose Gold">
+              <option value="玫瑰金">
+            </datalist>
+          </div>
+
+          <div class="form-field full">
+            <label>尺寸变体 <span style="font-weight:400; color:var(--color-text-muted);">（选填，逗号分隔，如 18cm / 7.08", 19.5cm / 7.67"；留空则详情页不展示尺寸选择）</span></label>
+            <input type="text" id="productSizes" placeholder="例如：18cm / 7.08&quot;, 19.5cm / 7.67&quot;">
+          </div>
+
+          <div class="form-field full">
+            <label>产品描述 <span style="font-weight:400; color:var(--color-text-muted);">（展示在详情页"Details & Materials"）</span></label>
+            <textarea id="productDescription" rows="3" placeholder="材质、工艺等描述"></textarea>
+          </div>
+
+          <div class="form-field full">
+            <label><input type="checkbox" value="new-in" class="productCollection"> 在 New In 列表页展示</label>
+            <p style="font-weight:400; color:var(--color-text-muted); font-size:0.8rem; margin-top:0.3rem;">首页各板块展示哪些商品请到"页面布局"页手动挑选，与这里无关。</p>
+          </div>
+
+          <div class="form-field full">
+            <label>常一起购买 <span style="font-weight:400; color:var(--color-text-muted);">（选填，详情页会展示"Frequently Bought Together"，买家可勾选一起加购）</span></label>
+            <div id="bundleProductList" class="block-product-list"></div>
+            <button type="button" class="btn btn-sm btn-outline" id="pickBundleProductsBtn" style="margin-top:0.6rem;">+ 选择商品</button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn-outline" id="productCancelBtn">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Image lightbox -->
+  <div class="image-lightbox-overlay" id="imageLightbox">
+    <button class="image-lightbox-close" id="imageLightboxClose" aria-label="关闭">&times;</button>
+    <img id="imageLightboxImg" src="" alt="">
+  </div>
+
+  <!-- Bundle product picker modal -->
+  <div class="modal-overlay" id="bundlePickerModal">
+    <div class="modal">
+      <button type="button" class="modal-close" id="bundlePickerClose" aria-label="关闭">&times;</button>
+      <h2>选择搭配商品</h2>
+      <div style="display:flex; gap:0.7rem; margin-bottom:1rem;">
+        <input type="text" id="bundlePickerSearch" placeholder="搜索商品名称或 SKU 编码…" style="flex:1; padding:0.5rem 0.7rem; border:1px solid var(--color-border); border-radius:6px; font-family:inherit;">
+        <select id="bundlePickerCategory" style="padding:0.5rem 0.7rem; border:1px solid var(--color-border); border-radius:6px; font-family:inherit;">
+          <option value="">全部分类</option>
+        </select>
+      </div>
+      <div id="bundlePickerList" style="max-height:50vh; overflow-y:auto; display:flex; flex-direction:column; gap:0.4rem;"></div>
+      <div class="form-actions">
+        <button type="button" class="btn" id="bundlePickerConfirm">确定</button>
+        <button type="button" class="btn btn-outline" id="bundlePickerCancel">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKU image picker modal -->
+  <div class="modal-overlay" id="skuImagePickerModal">
+    <div class="modal">
+      <h2>选择变体图片</h2>
+      <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:1rem;">从该商品已上传的图片中选择，或上传一张新图片。</p>
+      <div class="image-gallery" id="skuImagePickerGallery"></div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" id="skuImageUploadNewBtn">上传新图片</button>
+        <button type="button" class="btn btn-outline" id="skuImagePickerCancelBtn">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

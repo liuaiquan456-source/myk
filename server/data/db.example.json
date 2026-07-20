@@ -1,0 +1,1298 @@
+{
+  "categories": [
+    {
+      "id": 2,
+      "name": "SS jewelry",
+      "slug": "ss-jewelry",
+      "image": "/uploads/1784470091183-50220.jpg",
+      "parentId": null
+    },
+    {
+      "id": 9,
+      "name": "Brand Jewelry",
+      "slug": "brand-jewelry",
+      "image": "/uploads/1784470105666-647629.jpg",
+      "parentId": null
+    },
+    {
+      "id": 10,
+      "name": "Earrings",
+      "slug": "earrings",
+      "image": null,
+      "parentId": 9
+    },
+    {
+      "id": 11,
+      "name": "Necklace",
+      "slug": "necklace",
+      "image": null,
+      "parentId": 9
+    },
+    {
+      "id": 12,
+      "name": "Bangle",
+      "slug": "bangle",
+      "image": null,
+      "parentId": 9
+    },
+    {
+      "id": 13,
+      "name": "Bracelet",
+      "slug": "bracelet",
+      "image": null,
+      "parentId": 9
+    },
+    {
+      "id": 14,
+      "name": "Ring",
+      "slug": "ring",
+      "image": null,
+      "parentId": 9
+    },
+    {
+      "id": 16,
+      "name": "Earrings",
+      "slug": "earrings",
+      "image": null,
+      "parentId": 2
+    },
+    {
+      "id": 17,
+      "name": "Necklcae",
+      "slug": "necklcae",
+      "image": null,
+      "parentId": 2
+    },
+    {
+      "id": 18,
+      "name": "Bangle",
+      "slug": "bangle",
+      "image": null,
+      "parentId": 2
+    },
+    {
+      "id": 19,
+      "name": "Bracelet",
+      "slug": "bracelet",
+      "image": null,
+      "parentId": 2
+    },
+    {
+      "id": 20,
+      "name": "Ring",
+      "slug": "ring",
+      "image": null,
+      "parentId": 2
+    }
+  ],
+  "products": [
+    {
+      "id": 2,
+      "name": "pandora necklace",
+      "price": 45,
+      "categorySlug": "necklaces",
+      "colors": [
+        "pandora"
+      ],
+      "badge": null,
+      "collections": [
+        "new-drops",
+        "new-in"
+      ],
+      "images": [
+        "/uploads/1784115604003-545797.jpeg",
+        "/uploads/1784115580131-57769.jpeg"
+      ],
+      "skus": [
+        {
+          "id": "sku_2_1",
+          "code": "2601",
+          "color": "pandora",
+          "price": 45,
+          "stock": 16,
+          "image": "/uploads/1784115604003-545797.jpeg"
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "name": "Cartier earring",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [
+        "new-drops"
+      ],
+      "badge": null,
+      "images": [
+        "/uploads/1784422806581-754455.jpg",
+        "/uploads/1784422806590-196045.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 39,
+      "name": "CD earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784426556765-653668.jpg",
+        "/uploads/1784426556799-400342.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 40,
+      "name": "chanel earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784427600507-272112.jpg",
+        "/uploads/1784427600513-834424.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 41,
+      "name": "Dior earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784427687063-947462.jpg",
+        "/uploads/1784427687089-138906.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 42,
+      "name": "LV earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784427732109-678422.jpg",
+        "/uploads/1784427732115-788256.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 43,
+      "name": "pandora earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784427808135-583545.jpg",
+        "/uploads/1784427808141-93224.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 44,
+      "name": "TIFFANY EARRINGS",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784430087540-119318.jpg",
+        "/uploads/1784430087562-439078.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 45,
+      "name": "Valentino Earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784430119989-302259.jpg",
+        "/uploads/1784430119994-621587.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 46,
+      "name": "versace Earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784430150818-231473.jpg",
+        "/uploads/1784430150824-343858.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 47,
+      "name": "YSL Earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784430232146-776460.jpg",
+        "/uploads/1784430232155-262654.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 48,
+      "name": "cartier ring",
+      "price": 99,
+      "categorySlug": "ring",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432344639-375016.jpg",
+        "/uploads/1784432344652-527185.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 49,
+      "name": "clover rings",
+      "price": 99,
+      "categorySlug": "ring",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432373212-123104.jpg",
+        "/uploads/1784432373216-859086.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 50,
+      "name": "HERMES rings",
+      "price": 99,
+      "categorySlug": "ring",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432403950-669020.jpg",
+        "/uploads/1784432403957-573514.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 51,
+      "name": "LV ring",
+      "price": 99,
+      "categorySlug": "ring",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432428065-662573.jpg",
+        "/uploads/1784432428072-422092.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 52,
+      "name": "CD bracelets",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432463318-225793.jpg",
+        "/uploads/1784432463323-718375.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 53,
+      "name": "chanel bracelet",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432578719-38288.jpg",
+        "/uploads/1784432511935-962987.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 54,
+      "name": "clover bracelet",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432916522-878197.jpg",
+        "/uploads/1784432916541-942910.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 55,
+      "name": "Dior bracelet",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432952631-16444.jpg",
+        "/uploads/1784432952627-434027.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 56,
+      "name": "Lv bracelet",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784432981108-776337.jpg",
+        "/uploads/1784432981113-106264.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 57,
+      "name": "miumiu bracelet",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433007368-372395.jpg",
+        "/uploads/1784433007364-811205.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 58,
+      "name": "cartier bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433120468-717368.jpg",
+        "/uploads/1784433120499-635756.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 59,
+      "name": "CD bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433140136-932094.jpg",
+        "/uploads/1784433140144-433419.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 60,
+      "name": "clover bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433167118-613392.jpg",
+        "/uploads/1784433167126-162424.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 61,
+      "name": "GUCCI Bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433191732-395187.jpg",
+        "/uploads/1784433191736-103206.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 62,
+      "name": "HERMES bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433224551-967997.jpg",
+        "/uploads/1784433224562-411781.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 63,
+      "name": "LV bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433248004-898060.jpg",
+        "/uploads/1784433248008-900944.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 64,
+      "name": "lv bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433271147-196126.jpg",
+        "/uploads/1784433271154-101696.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 65,
+      "name": "VERSACE bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784433304509-50154.jpg",
+        "/uploads/1784433304513-823991.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 66,
+      "name": "Cartier necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441121230-529411.jpg",
+        "/uploads/1784441121249-774108.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 67,
+      "name": "CHANEL项链",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441155300-527953.jpg",
+        "/uploads/1784441155308-672992.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 68,
+      "name": "DIOR necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441323523-792797.jpg",
+        "/uploads/1784441172422-608244.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 69,
+      "name": "GUCCI necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441200244-980382.jpg",
+        "/uploads/1784441200249-257937.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 70,
+      "name": "HERMS necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441244351-909413.jpg",
+        "/uploads/1784441244356-181882.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 71,
+      "name": "HERMS necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441271179-882491.jpg",
+        "/uploads/1784441271186-653489.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 72,
+      "name": "MIUMIU necklcae",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441309367-268425.jpg",
+        "/uploads/1784441309374-520166.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 73,
+      "name": "PRADA necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441455538-850380.jpg",
+        "/uploads/1784441455527-275795.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 74,
+      "name": "TIFFANY necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441538037-225765.jpg",
+        "/uploads/1784441538043-922130.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 75,
+      "name": "TOUS necklace",
+      "price": 99,
+      "categorySlug": "necklace",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441586685-918348.jpg",
+        "/uploads/1784441586697-127540.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 76,
+      "name": "flower earrings",
+      "price": 99,
+      "categorySlug": "earrings",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441807246-229651.jpg",
+        "/uploads/1784441807252-151158.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 77,
+      "name": "blue ring",
+      "price": 99,
+      "categorySlug": "ring",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441837280-516670.jpg",
+        "/uploads/1784441837286-115977.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 78,
+      "name": "bracelet chain",
+      "price": 99,
+      "categorySlug": "bracelet",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441861629-706561.jpg",
+        "/uploads/1784441861634-817137.jpg"
+      ],
+      "skus": []
+    },
+    {
+      "id": 79,
+      "name": "bangle",
+      "price": 99,
+      "categorySlug": "bangle",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441896714-842087.jpg",
+        "/uploads/1784441896719-575977.jpg"
+      ],
+      "skus": [],
+      "bundleProductIds": []
+    },
+    {
+      "id": 80,
+      "name": "necklace",
+      "price": 99,
+      "categorySlug": "necklcae",
+      "colors": [],
+      "collections": [],
+      "badge": null,
+      "images": [
+        "/uploads/1784441921094-379284.jpg",
+        "/uploads/1784441921101-937115.jpg"
+      ],
+      "skus": [],
+      "description": "",
+      "sizes": [],
+      "bundleProductIds": [
+        76,
+        78
+      ]
+    }
+  ],
+  "layout": {
+    "hero": {
+      "eyebrow": "NEW COLLECTION",
+      "heading": "Elevate Your Everyday",
+      "buttonText": "Shop Now",
+      "image": "/uploads/1784427333866-249126.png"
+    },
+    "shopByCategoryEnabled": true,
+    "blocks": [
+      {
+        "id": "gold-collection",
+        "title": "stainless steel jewerly",
+        "altBackground": false,
+        "productIds": [
+          76,
+          79,
+          78,
+          77,
+          80,
+          65
+        ]
+      },
+      {
+        "id": "new-drops",
+        "title": "New Drops · Every Thursday",
+        "altBackground": true,
+        "productIds": [
+          2,
+          38
+        ]
+      },
+      {
+        "id": "silver-collection",
+        "title": "Silver Collection",
+        "altBackground": false,
+        "productIds": []
+      },
+      {
+        "id": "trending",
+        "title": "Trending Now",
+        "altBackground": true,
+        "productIds": []
+      }
+    ]
+  },
+  "orders": [],
+  "nextCategoryId": 21,
+  "nextProductId": 82,
+  "nextOrderId": 1,
+  "locales": [
+    {
+      "code": "en",
+      "name": "English",
+      "nativeName": "English"
+    },
+    {
+      "code": "es",
+      "name": "Spanish",
+      "nativeName": "Español"
+    },
+    {
+      "code": "fr",
+      "name": "French",
+      "nativeName": "Français"
+    },
+    {
+      "code": "ru",
+      "name": "Russian",
+      "nativeName": "Русский"
+    },
+    {
+      "code": "pt",
+      "name": "Portuguese",
+      "nativeName": "Português"
+    },
+    {
+      "code": "ja",
+      "name": "Japanese",
+      "nativeName": "日本語"
+    },
+    {
+      "code": "ko",
+      "name": "Korean",
+      "nativeName": "한국어"
+    },
+    {
+      "code": "id",
+      "name": "Indonesian",
+      "nativeName": "Bahasa Indonesia"
+    }
+  ],
+  "translations": {
+    "en": {
+      "nav.bestsellers": "Bestsellers",
+      "nav.newIn": "New In",
+      "nav.shopBy": "Shop By",
+      "nav.necklaces": "Necklaces",
+      "nav.bracelets": "Bracelets",
+      "nav.rings": "Rings",
+      "nav.earrings": "Earrings",
+      "nav.collections": "Collections",
+      "nav.aboutUs": "About Us",
+      "announcement.freeShipping": "Free Shipping For Orders Over $40",
+      "common.home": "Home",
+      "section.viewAll": "View All",
+      "section.youMayAlsoLike": "You May Also Like",
+      "trust.fairPricing": "Fair Pricing",
+      "trust.ethicallyMade": "Ethically Made",
+      "trust.returns30": "30-Day Return",
+      "trust.reviews": "100K+ 5 Star Reviews",
+      "trust.warranty100": "100-Day Warranty",
+      "footer.aboutUs": "About Us",
+      "footer.ourStory": "Our Story",
+      "footer.sustainability": "Sustainability",
+      "footer.careers": "Careers",
+      "footer.helpCenter": "Help Center",
+      "footer.shippingInfo": "Shipping Info",
+      "footer.returns": "Returns & Exchanges",
+      "footer.faq": "FAQ",
+      "footer.contactUs": "Contact Us",
+      "footer.followUs": "Follow Us",
+      "footer.newsletter": "Newsletter",
+      "footer.emailPlaceholder": "Email address",
+      "footer.subscribe": "Subscribe",
+      "footer.copyright": "© 2026 MYK Jewelry. All rights reserved.",
+      "listing.sortBy": "Sort By",
+      "listing.filter": "Filter",
+      "listing.addToBag": "+ Add to Bag",
+      "listing.notifyMe": "Notify Me",
+      "pdp.color": "Color",
+      "pdp.size": "Size",
+      "pdp.addToBag": "Add to Bag",
+      "pdp.shipsWithin24": "Ships within 24 hours",
+      "pdp.returns30": "30-Day Return",
+      "pdp.warranty100": "100-Day Warranty",
+      "pdp.detailsMaterials": "Details & Materials",
+      "pdp.sizing": "Sizing",
+      "pdp.careInstructions": "Care Instructions",
+      "pdp.shippingReturns": "Shipping & Returns",
+      "pdp.reviews": "reviews",
+      "cart.title": "Shopping Bag",
+      "cart.empty": "Your bag is empty.",
+      "cart.continueShopping": "Continue Shopping",
+      "cart.subtotal": "Subtotal",
+      "cart.checkout": "Checkout",
+      "cart.fullName": "Full Name",
+      "cart.email": "Email",
+      "cart.shippingAddress": "Shipping Address",
+      "cart.placeOrder": "Place Order",
+      "cart.thankYou": "Thank you! Your order has been placed."
+    },
+    "es": {
+      "nav.bestsellers": "Más vendidos",
+      "nav.newIn": "Novedades",
+      "nav.shopBy": "Comprar por",
+      "nav.necklaces": "Collares",
+      "nav.bracelets": "Pulseras",
+      "nav.rings": "Anillos",
+      "nav.earrings": "Pendientes",
+      "nav.collections": "Colecciones",
+      "nav.aboutUs": "Sobre nosotros",
+      "announcement.freeShipping": "Envío gratis en pedidos superiores a $40",
+      "common.home": "Inicio",
+      "section.viewAll": "Ver todo",
+      "section.youMayAlsoLike": "También te puede gustar",
+      "trust.fairPricing": "Precios justos",
+      "trust.ethicallyMade": "Fabricación ética",
+      "trust.returns30": "Devolución en 30 días",
+      "trust.reviews": "Más de 100 mil reseñas de 5 estrellas",
+      "trust.warranty100": "Garantía de 100 días",
+      "footer.aboutUs": "Sobre nosotros",
+      "footer.ourStory": "Nuestra historia",
+      "footer.sustainability": "Sostenibilidad",
+      "footer.careers": "Empleo",
+      "footer.helpCenter": "Centro de ayuda",
+      "footer.shippingInfo": "Información de envío",
+      "footer.returns": "Devoluciones y cambios",
+      "footer.faq": "Preguntas frecuentes",
+      "footer.contactUs": "Contáctanos",
+      "footer.followUs": "Síguenos",
+      "footer.newsletter": "Boletín",
+      "footer.emailPlaceholder": "Correo electrónico",
+      "footer.subscribe": "Suscribirse",
+      "footer.copyright": "© 2026 MYK Jewelry. Todos los derechos reservados.",
+      "listing.sortBy": "Ordenar por",
+      "listing.filter": "Filtrar",
+      "listing.addToBag": "+ Añadir a la bolsa",
+      "listing.notifyMe": "Avisarme",
+      "pdp.color": "Color",
+      "pdp.size": "Talla",
+      "pdp.addToBag": "Añadir a la bolsa",
+      "pdp.shipsWithin24": "Envío en 24 horas",
+      "pdp.returns30": "Devolución en 30 días",
+      "pdp.warranty100": "Garantía de 100 días",
+      "pdp.detailsMaterials": "Detalles y materiales",
+      "pdp.sizing": "Tallas",
+      "pdp.careInstructions": "Instrucciones de cuidado",
+      "pdp.shippingReturns": "Envíos y devoluciones",
+      "pdp.reviews": "reseñas",
+      "cart.title": "Bolsa de compras",
+      "cart.empty": "Tu bolsa está vacía.",
+      "cart.continueShopping": "Seguir comprando",
+      "cart.subtotal": "Subtotal",
+      "cart.checkout": "Finalizar compra",
+      "cart.fullName": "Nombre completo",
+      "cart.email": "Correo electrónico",
+      "cart.shippingAddress": "Dirección de envío",
+      "cart.placeOrder": "Realizar pedido",
+      "cart.thankYou": "¡Gracias! Tu pedido ha sido realizado."
+    },
+    "fr": {
+      "nav.bestsellers": "Meilleures ventes",
+      "nav.newIn": "Nouveautés",
+      "nav.shopBy": "Acheter par",
+      "nav.necklaces": "Colliers",
+      "nav.bracelets": "Bracelets",
+      "nav.rings": "Bagues",
+      "nav.earrings": "Boucles d'oreilles",
+      "nav.collections": "Collections",
+      "nav.aboutUs": "À propos",
+      "announcement.freeShipping": "Livraison gratuite dès 40 $ d'achat",
+      "common.home": "Accueil",
+      "section.viewAll": "Voir tout",
+      "section.youMayAlsoLike": "Vous aimerez aussi",
+      "trust.fairPricing": "Prix justes",
+      "trust.ethicallyMade": "Fabrication éthique",
+      "trust.returns30": "Retour sous 30 jours",
+      "trust.reviews": "Plus de 100 000 avis 5 étoiles",
+      "trust.warranty100": "Garantie de 100 jours",
+      "footer.aboutUs": "À propos",
+      "footer.ourStory": "Notre histoire",
+      "footer.sustainability": "Durabilité",
+      "footer.careers": "Carrières",
+      "footer.helpCenter": "Centre d'aide",
+      "footer.shippingInfo": "Informations de livraison",
+      "footer.returns": "Retours et échanges",
+      "footer.faq": "FAQ",
+      "footer.contactUs": "Nous contacter",
+      "footer.followUs": "Suivez-nous",
+      "footer.newsletter": "Newsletter",
+      "footer.emailPlaceholder": "Adresse e-mail",
+      "footer.subscribe": "S'abonner",
+      "footer.copyright": "© 2026 MYK Jewelry. Tous droits réservés.",
+      "listing.sortBy": "Trier par",
+      "listing.filter": "Filtrer",
+      "listing.addToBag": "+ Ajouter au panier",
+      "listing.notifyMe": "Me prévenir",
+      "pdp.color": "Couleur",
+      "pdp.size": "Taille",
+      "pdp.addToBag": "Ajouter au panier",
+      "pdp.shipsWithin24": "Expédié sous 24 heures",
+      "pdp.returns30": "Retour sous 30 jours",
+      "pdp.warranty100": "Garantie de 100 jours",
+      "pdp.detailsMaterials": "Détails et matières",
+      "pdp.sizing": "Tailles",
+      "pdp.careInstructions": "Conseils d'entretien",
+      "pdp.shippingReturns": "Livraison et retours",
+      "pdp.reviews": "avis",
+      "cart.title": "Panier",
+      "cart.empty": "Votre panier est vide.",
+      "cart.continueShopping": "Continuer mes achats",
+      "cart.subtotal": "Sous-total",
+      "cart.checkout": "Passer la commande",
+      "cart.fullName": "Nom complet",
+      "cart.email": "E-mail",
+      "cart.shippingAddress": "Adresse de livraison",
+      "cart.placeOrder": "Commander",
+      "cart.thankYou": "Merci ! Votre commande a été passée."
+    },
+    "ru": {
+      "nav.bestsellers": "Хиты продаж",
+      "nav.newIn": "Новинки",
+      "nav.shopBy": "Купить по категории",
+      "nav.necklaces": "Колье",
+      "nav.bracelets": "Браслеты",
+      "nav.rings": "Кольца",
+      "nav.earrings": "Серьги",
+      "nav.collections": "Коллекции",
+      "nav.aboutUs": "О нас",
+      "announcement.freeShipping": "Бесплатная доставка при заказе от $40",
+      "common.home": "Главная",
+      "section.viewAll": "Смотреть все",
+      "section.youMayAlsoLike": "Вам может понравиться",
+      "trust.fairPricing": "Честные цены",
+      "trust.ethicallyMade": "Этичное производство",
+      "trust.returns30": "Возврат в течение 30 дней",
+      "trust.reviews": "Более 100 000 отзывов с 5 звёздами",
+      "trust.warranty100": "Гарантия 100 дней",
+      "footer.aboutUs": "О нас",
+      "footer.ourStory": "Наша история",
+      "footer.sustainability": "Устойчивое развитие",
+      "footer.careers": "Карьера",
+      "footer.helpCenter": "Центр поддержки",
+      "footer.shippingInfo": "Информация о доставке",
+      "footer.returns": "Возврат и обмен",
+      "footer.faq": "Вопросы и ответы",
+      "footer.contactUs": "Связаться с нами",
+      "footer.followUs": "Мы в соцсетях",
+      "footer.newsletter": "Рассылка",
+      "footer.emailPlaceholder": "Электронная почта",
+      "footer.subscribe": "Подписаться",
+      "footer.copyright": "© 2026 MYK Jewelry. Все права защищены.",
+      "listing.sortBy": "Сортировать",
+      "listing.filter": "Фильтр",
+      "listing.addToBag": "+ В корзину",
+      "listing.notifyMe": "Уведомить меня",
+      "pdp.color": "Цвет",
+      "pdp.size": "Размер",
+      "pdp.addToBag": "В корзину",
+      "pdp.shipsWithin24": "Отправка в течение 24 часов",
+      "pdp.returns30": "Возврат в течение 30 дней",
+      "pdp.warranty100": "Гарантия 100 дней",
+      "pdp.detailsMaterials": "Детали и материалы",
+      "pdp.sizing": "Размеры",
+      "pdp.careInstructions": "Уход за изделием",
+      "pdp.shippingReturns": "Доставка и возврат",
+      "pdp.reviews": "отзывов",
+      "cart.title": "Корзина",
+      "cart.empty": "Ваша корзина пуста.",
+      "cart.continueShopping": "Продолжить покупки",
+      "cart.subtotal": "Промежуточный итог",
+      "cart.checkout": "Оформить заказ",
+      "cart.fullName": "Полное имя",
+      "cart.email": "Электронная почта",
+      "cart.shippingAddress": "Адрес доставки",
+      "cart.placeOrder": "Оформить заказ",
+      "cart.thankYou": "Спасибо! Ваш заказ оформлен."
+    },
+    "pt": {
+      "nav.bestsellers": "Mais vendidos",
+      "nav.newIn": "Novidades",
+      "nav.shopBy": "Comprar por",
+      "nav.necklaces": "Colares",
+      "nav.bracelets": "Pulseiras",
+      "nav.rings": "Anéis",
+      "nav.earrings": "Brincos",
+      "nav.collections": "Coleções",
+      "nav.aboutUs": "Sobre nós",
+      "announcement.freeShipping": "Frete grátis em pedidos acima de $40",
+      "common.home": "Início",
+      "section.viewAll": "Ver tudo",
+      "section.youMayAlsoLike": "Você também pode gostar",
+      "trust.fairPricing": "Preços justos",
+      "trust.ethicallyMade": "Fabricação ética",
+      "trust.returns30": "Devolução em 30 dias",
+      "trust.reviews": "Mais de 100 mil avaliações 5 estrelas",
+      "trust.warranty100": "Garantia de 100 dias",
+      "footer.aboutUs": "Sobre nós",
+      "footer.ourStory": "Nossa história",
+      "footer.sustainability": "Sustentabilidade",
+      "footer.careers": "Carreiras",
+      "footer.helpCenter": "Central de ajuda",
+      "footer.shippingInfo": "Informações de envio",
+      "footer.returns": "Devoluções e trocas",
+      "footer.faq": "Perguntas frequentes",
+      "footer.contactUs": "Fale conosco",
+      "footer.followUs": "Siga-nos",
+      "footer.newsletter": "Newsletter",
+      "footer.emailPlaceholder": "Endereço de e-mail",
+      "footer.subscribe": "Inscrever-se",
+      "footer.copyright": "© 2026 MYK Jewelry. Todos os direitos reservados.",
+      "listing.sortBy": "Ordenar por",
+      "listing.filter": "Filtrar",
+      "listing.addToBag": "+ Adicionar à sacola",
+      "listing.notifyMe": "Avise-me",
+      "pdp.color": "Cor",
+      "pdp.size": "Tamanho",
+      "pdp.addToBag": "Adicionar à sacola",
+      "pdp.shipsWithin24": "Envio em 24 horas",
+      "pdp.returns30": "Devolução em 30 dias",
+      "pdp.warranty100": "Garantia de 100 dias",
+      "pdp.detailsMaterials": "Detalhes e materiais",
+      "pdp.sizing": "Tamanhos",
+      "pdp.careInstructions": "Instruções de cuidado",
+      "pdp.shippingReturns": "Envio e devoluções",
+      "pdp.reviews": "avaliações",
+      "cart.title": "Sacola de compras",
+      "cart.empty": "Sua sacola está vazia.",
+      "cart.continueShopping": "Continuar comprando",
+      "cart.subtotal": "Subtotal",
+      "cart.checkout": "Finalizar compra",
+      "cart.fullName": "Nome completo",
+      "cart.email": "E-mail",
+      "cart.shippingAddress": "Endereço de entrega",
+      "cart.placeOrder": "Fazer pedido",
+      "cart.thankYou": "Obrigado! Seu pedido foi realizado."
+    },
+    "ja": {
+      "nav.bestsellers": "ベストセラー",
+      "nav.newIn": "新着",
+      "nav.shopBy": "カテゴリから探す",
+      "nav.necklaces": "ネックレス",
+      "nav.bracelets": "ブレスレット",
+      "nav.rings": "リング",
+      "nav.earrings": "イヤリング",
+      "nav.collections": "コレクション",
+      "nav.aboutUs": "会社概要",
+      "announcement.freeShipping": "40ドル以上のご注文で送料無料",
+      "common.home": "ホーム",
+      "section.viewAll": "すべて見る",
+      "section.youMayAlsoLike": "おすすめ商品",
+      "trust.fairPricing": "適正価格",
+      "trust.ethicallyMade": "エシカル製造",
+      "trust.returns30": "30日間返品可能",
+      "trust.reviews": "10万件以上の5つ星レビュー",
+      "trust.warranty100": "100日間保証",
+      "footer.aboutUs": "会社概要",
+      "footer.ourStory": "私たちのストーリー",
+      "footer.sustainability": "サステナビリティ",
+      "footer.careers": "採用情報",
+      "footer.helpCenter": "ヘルプセンター",
+      "footer.shippingInfo": "配送について",
+      "footer.returns": "返品・交換",
+      "footer.faq": "よくある質問",
+      "footer.contactUs": "お問い合わせ",
+      "footer.followUs": "フォローする",
+      "footer.newsletter": "ニュースレター",
+      "footer.emailPlaceholder": "メールアドレス",
+      "footer.subscribe": "登録する",
+      "footer.copyright": "© 2026 MYK Jewelry. All rights reserved.",
+      "listing.sortBy": "並べ替え",
+      "listing.filter": "絞り込み",
+      "listing.addToBag": "＋ バッグに追加",
+      "listing.notifyMe": "入荷通知",
+      "pdp.color": "カラー",
+      "pdp.size": "サイズ",
+      "pdp.addToBag": "バッグに追加",
+      "pdp.shipsWithin24": "24時間以内に発送",
+      "pdp.returns30": "30日間返品可能",
+      "pdp.warranty100": "100日間保証",
+      "pdp.detailsMaterials": "詳細・素材",
+      "pdp.sizing": "サイズについて",
+      "pdp.careInstructions": "お手入れ方法",
+      "pdp.shippingReturns": "配送・返品について",
+      "pdp.reviews": "件のレビュー",
+      "cart.title": "ショッピングバッグ",
+      "cart.empty": "バッグは空です。",
+      "cart.continueShopping": "買い物を続ける",
+      "cart.subtotal": "小計",
+      "cart.checkout": "レジに進む",
+      "cart.fullName": "お名前",
+      "cart.email": "メールアドレス",
+      "cart.shippingAddress": "配送先住所",
+      "cart.placeOrder": "注文を確定する",
+      "cart.thankYou": "ご注文ありがとうございます。"
+    },
+    "ko": {
+      "nav.bestsellers": "베스트셀러",
+      "nav.newIn": "신상품",
+      "nav.shopBy": "카테고리별 쇼핑",
+      "nav.necklaces": "목걸이",
+      "nav.bracelets": "팔짜",
+      "nav.rings": "반지",
+      "nav.earrings": "귀걸이",
+      "nav.collections": "컴렉션",
+      "nav.aboutUs": "회사 소개",
+      "announcement.freeShipping": "40달러 이상 구매 시 무료 배송",
+      "common.home": "홈",
+      "section.viewAll": "전체 보기",
+      "section.youMayAlsoLike": "함께 보면 좋은 상품",
+      "trust.fairPricing": "합리적인 가격",
+      "trust.ethicallyMade": "윤리적 제작",
+      "trust.returns30": "30일 이내 반품",
+      "trust.reviews": "10만 개 이상의 5점 리뷰",
+      "trust.warranty100": "100일 품질보증",
+      "footer.aboutUs": "회사 소개",
+      "footer.ourStory": "브랜드 스토리",
+      "footer.sustainability": "지속가능성",
+      "footer.careers": "채용 정보",
+      "footer.helpCenter": "고객센터",
+      "footer.shippingInfo": "배송 안내",
+      "footer.returns": "반품 및 교환",
+      "footer.faq": "자주 묻는 질문",
+      "footer.contactUs": "문의하기",
+      "footer.followUs": "팔로우하기",
+      "footer.newsletter": "뉴스레터",
+      "footer.emailPlaceholder": "이메일 주소",
+      "footer.subscribe": "구독하기",
+      "footer.copyright": "© 2026 MYK Jewelry. All rights reserved.",
+      "listing.sortBy": "정렬",
+      "listing.filter": "필터",
+      "listing.addToBag": "+ 장바구니에 담기",
+      "listing.notifyMe": "재입고 알림",
+      "pdp.color": "색상",
+      "pdp.size": "사이즈",
+      "pdp.addToBag": "장바구니에 담기",
+      "pdp.shipsWithin24": "24시간 이내 발송",
+      "pdp.returns30": "30일 이내 반품",
+      "pdp.warranty100": "100일 품질보증",
+      "pdp.detailsMaterials": "상세 정보 및 소재",
+      "pdp.sizing": "사이즈 안내",
+      "pdp.careInstructions": "관리 방법",
+      "pdp.shippingReturns": "배송 및 반품",
+      "pdp.reviews": "리뷰",
+      "cart.title": "장바구니",
+      "cart.empty": "장바구니가 비어 있습니다.",
+      "cart.continueShopping": "쇼핑 계속하기",
+      "cart.subtotal": "소계",
+      "cart.checkout": "결제하기",
+      "cart.fullName": "이름",
+      "cart.email": "이메일",
+      "cart.shippingAddress": "배송 주소",
+      "cart.placeOrder": "주문하기",
+      "cart.thankYou": "감사합니다! 주문이 완료되었습니다."
+    },
+    "id": {
+      "nav.bestsellers": "Terlaris",
+      "nav.newIn": "Terbaru",
+      "nav.shopBy": "Belanja Berdasarkan",
+      "nav.necklaces": "Kalung",
+      "nav.bracelets": "Gelang",
+      "nav.rings": "Cincin",
+      "nav.earrings": "Anting",
+      "nav.collections": "Koleksi",
+      "nav.aboutUs": "Tentang Kami",
+      "announcement.freeShipping": "Gratis ongkir untuk pembelian di atas $40",
+      "common.home": "Beranda",
+      "section.viewAll": "Lihat Semua",
+      "section.youMayAlsoLike": "Anda Mungkin Juga Suka",
+      "trust.fairPricing": "Harga Adil",
+      "trust.ethicallyMade": "Dibuat Secara Etis",
+      "trust.returns30": "Pengembalian 30 Hari",
+      "trust.reviews": "100rb+ Ulasan Bintang 5",
+      "trust.warranty100": "Garansi 100 Hari",
+      "footer.aboutUs": "Tentang Kami",
+      "footer.ourStory": "Kisah Kami",
+      "footer.sustainability": "Keberlanjutan",
+      "footer.careers": "Karier",
+      "footer.helpCenter": "Pusat Bantuan",
+      "footer.shippingInfo": "Info Pengiriman",
+      "footer.returns": "Pengembalian & Penukaran",
+      "footer.faq": "Pertanyaan Umum",
+      "footer.contactUs": "Hubungi Kami",
+      "footer.followUs": "Ikuti Kami",
+      "footer.newsletter": "Buletin",
+      "footer.emailPlaceholder": "Alamat email",
+      "footer.subscribe": "Berlangganan",
+      "footer.copyright": "© 2026 MYK Jewelry. Semua hak dilindungi.",
+      "listing.sortBy": "Urutkan",
+      "listing.filter": "Filter",
+      "listing.addToBag": "+ Tambah ke Tas",
+      "listing.notifyMe": "Ingatkan Saya",
+      "pdp.color": "Warna",
+      "pdp.size": "Ukuran",
+      "pdp.addToBag": "Tambah ke Tas",
+      "pdp.shipsWithin24": "Dikirim dalam 24 jam",
+      "pdp.returns30": "Pengembalian 30 Hari",
+      "pdp.warranty100": "Garansi 100 Hari",
+      "pdp.detailsMaterials": "Detail & Bahan",
+      "pdp.sizing": "Ukuran",
+      "pdp.careInstructions": "Petunjuk Perawatan",
+      "pdp.shippingReturns": "Pengiriman & Pengembalian",
+      "pdp.reviews": "ulasan",
+      "cart.title": "Tas Belanja",
+      "cart.empty": "Tas belanja Anda kosong.",
+      "cart.continueShopping": "Lanjutkan Belanja",
+      "cart.subtotal": "Subtotal",
+      "cart.checkout": "Checkout",
+      "cart.fullName": "Nama Lengkap",
+      "cart.email": "Email",
+      "cart.shippingAddress": "Alamat Pengiriman",
+      "cart.placeOrder": "Buat Pesanan",
+      "cart.thankYou": "Terima kasih! Pesanan Anda telah dibuat."
+    }
+  },
+  "customers": [],
+  "nextCustomerId": 1,
+  "distributors": [],
+  "nextDistributorId": 1
+}

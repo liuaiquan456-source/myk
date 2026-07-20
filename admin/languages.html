@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>语言管理 | MYK 管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body data-page="languages">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">MYK</div>
+      <div class="admin-logo-sub">管理后台</div>
+      <nav class="admin-nav">
+        <a href="index.html">仪表盘</a>
+        <a href="layout.html">页面布局</a>
+        <a href="products.html">商品管理</a>
+        <a href="categories.html">分类管理</a>
+        <a href="orders.html">订单管理</a>
+        <a href="languages.html" class="active">语言管理</a>
+        <a href="customers.html">客户管理</a>
+        <div class="view-site">
+          <a href="../index.html" target="_blank">查看前台 &rarr;</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <div>
+          <h1>语言管理</h1>
+          <p>管理前台支持的语言，以及每种语言的界面文案（导航、按钮、页脚等）</p>
+        </div>
+        <button class="btn" id="addLanguageBtn">+ 添加语言</button>
+      </div>
+
+      <div class="panel">
+        <h2>已启用的语言</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>代码</th>
+              <th>英文名称</th>
+              <th>本地名称</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="localeRows"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <h2>翻译内容编辑</h2>
+        <div class="form-field" style="max-width:320px;">
+          <label>选择语言</label>
+          <select id="localeSelect"></select>
+        </div>
+
+        <div id="translationGroups"></div>
+
+        <div class="form-actions">
+          <button class="btn" id="saveTranslationsBtn">保存文案</button>
+          <button class="btn btn-outline" id="exportJsonBtn">导出 JSON</button>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--color-border); margin:1.8rem 0;">
+
+        <h2>批量导入（JSON）</h2>
+        <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:0.8rem;">
+          粘贴 <code>{"key": "翻译内容", ...}</code> 格式的 JSON，将合并写入当前选中的语言。也可以先点击"导出 JSON"获取模板。
+        </p>
+        <div class="form-field">
+          <textarea id="importJsonInput" rows="8" style="font-family:monospace; font-size:0.8rem;" placeholder='{"nav.newIn": "新着", "cart.checkout": "レジに進む"}'></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn" id="importJsonBtn">导入并保存</button>
+          <input type="file" id="importJsonFile" accept="application/json" style="display:none;">
+          <button class="btn btn-outline" id="importJsonFileBtn">从文件导入</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add language modal -->
+  <div class="modal-overlay" id="languageModal">
+    <div class="modal">
+      <h2>添加语言</h2>
+      <form id="languageForm">
+        <div class="form-field">
+          <label>语言代码（如 de、it、th）</label>
+          <input type="text" id="localeCode" required maxlength="5">
+        </div>
+        <div class="form-field">
+          <label>英文名称（如 German）</label>
+          <input type="text" id="localeName" required>
+        </div>
+        <div class="form-field">
+          <label>本地名称（如 Deutsch）</label>
+          <input type="text" id="localeNativeName" required>
+        </div>
+        <p style="color:var(--color-text-muted); font-size:0.8rem;">新语言会先复制一份英文文案，之后可在下方编辑或导入翻译。</p>
+        <div class="form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn-outline" id="languageCancelBtn">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/languages.js"></script>
+</body>
+</html>

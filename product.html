@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solis Bangle | MYK</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+
+        <a href="index.html" class="logo">MYK</a>
+
+        <nav class="main-nav" id="mainNav">
+          <a href="index.html" data-i18n="nav.bestsellers">Bestsellers</a>
+          <a href="new-in.html" data-i18n="nav.newIn">New In</a>
+          <span id="navCategoryLinks"></span>
+          <a href="#" data-i18n="nav.aboutUs">About Us</a>
+        </nav>
+      </div>
+
+      <div class="header-icons">
+        <div class="site-search">
+          <input type="search" id="siteSearchInput" class="site-search-input" placeholder="Search products&hellip;">
+        </div>
+        <button aria-label="Search" class="icon-btn" id="siteSearchToggle">
+          <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="21" y1="21" x2="16.5" y2="16.5" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+        <div class="lang-switcher">
+          <button class="lang-switcher-trigger" id="langSwitcherTrigger">
+            <span id="currentLocaleLabel">English</span>
+            <svg viewBox="0 0 24 24" width="10" height="10"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+          <div class="lang-switcher-menu" id="langSwitcherMenu"></div>
+        </div>
+        <span class="header-currency">United States (USD $) <svg viewBox="0 0 24 24" width="10" height="10"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
+        <button aria-label="Orders" class="icon-btn" id="ordersIcon">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 8l9-5 9 5-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13v9" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+        <a href="account.html" id="accountIcon" aria-label="Account" class="icon-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </a>
+        <button aria-label="Wishlist" class="icon-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 20s-7-4.5-9.3-9C1 7.5 3 4 6.5 4c2 0 3.5 1.2 4.5 2.7C12 5.2 13.5 4 15.5 4 19 4 21 7.5 19.3 11 17 15.5 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+        <a href="cart.html" aria-label="Cart" class="icon-btn">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16l-1.5 10.5a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 6z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 6a4 4 0 118 0" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span class="cart-count">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Breadcrumb -->
+  <nav class="pdp-breadcrumb">
+    <a href="index.html" data-i18n="common.home">Home</a> / <a href="#" id="breadcrumbCategory">Bracelets</a> / <span id="breadcrumbName">Product</span>
+  </nav>
+
+  <!-- Product detail -->
+  <section class="pdp">
+    <div class="pdp-grid">
+
+      <!-- Gallery -->
+      <div class="pdp-gallery">
+        <div class="pdp-main-image placeholder-gold" id="pdpMainImage"></div>
+        <div class="pdp-thumbs" id="pdpThumbs"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="pdp-info">
+        <h1 id="pdpTitle">Product</h1>
+
+        <div class="pdp-rating">
+          <span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+          <span class="pdp-rating-count">128 reviews</span>
+        </div>
+
+        <p class="pdp-price" id="pdpPriceValue">$0.00</p>
+        <p class="pdp-installment" id="pdpInstallment"></p>
+
+        <div class="pdp-option-group" id="colorOptionGroup">
+          <p class="pdp-option-label"><span data-i18n="pdp.color">Color</span>: <span class="pdp-option-value" id="colorValue">Gold</span></p>
+          <div class="pdp-swatches" id="colorSwatches"></div>
+        </div>
+
+        <div class="pdp-option-group" id="sizeOptionGroup">
+          <p class="pdp-option-label" data-i18n="pdp.size">Size</p>
+          <div class="pdp-size-options" id="sizeOptions"></div>
+        </div>
+
+        <div class="pdp-purchase-row">
+          <div class="qty-selector">
+            <button class="qty-btn" data-action="decrease" aria-label="Decrease quantity">&minus;</button>
+            <span class="qty-value" id="qtyValue">1</span>
+            <button class="qty-btn" data-action="increase" aria-label="Increase quantity">+</button>
+          </div>
+          <button class="btn btn-dark pdp-add-btn" data-i18n="pdp.addToBag">Add to Bag</button>
+          <button class="pdp-wishlist" aria-label="Add to wishlist">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 20s-7-4.5-9.3-9C1 7.5 3 4 6.5 4c2 0 3.5 1.2 4.5 2.7C12 5.2 13.5 4 15.5 4 19 4 21 7.5 19.3 11 17 15.5 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+          </button>
+        </div>
+
+        <div class="pdp-accordion">
+          <div class="accordion-item open" id="detailsAccordionItem">
+            <button class="accordion-trigger">
+              <span data-i18n="pdp.detailsMaterials">Details &amp; Materials</span> <span class="accordion-icon">&minus;</span>
+            </button>
+            <div class="accordion-panel">
+              <p id="pdpDescription"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pdp-bundle" id="pdpBundle" style="display:none;">
+          <h3 data-i18n="pdp.frequentlyBoughtTogether">Frequently Bought Together</h3>
+          <div class="pdp-bundle-images" id="pdpBundleImages"></div>
+          <div class="pdp-bundle-list" id="pdpBundleList"></div>
+          <div class="pdp-bundle-footer">
+            <button type="button" class="btn btn-dark" id="pdpBundleAddBtn" data-i18n="pdp.addSelectedToBag">+ Add selected to bag</button>
+            <div class="pdp-bundle-total"><span data-i18n="pdp.totalPrice">Total price</span>: <span id="pdpBundleTotal">$0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- You may also like -->
+  <section class="category-block">
+    <div class="category-header">
+      <h2 data-i18n="section.youMayAlsoLike">You May Also Like</h2>
+    </div>
+    <div class="carousel-wrapper">
+      <button class="carousel-btn prev" aria-label="Previous">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <div class="carousel-track product-grid" id="relatedProductsTrack"></div>
+      <button class="carousel-btn next" aria-label="Next">
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h5 data-i18n="footer.aboutUs">About Us</h5>
+        <a href="#" data-i18n="footer.ourStory">Our Story</a>
+        <a href="#" data-i18n="footer.sustainability">Sustainability</a>
+        <a href="#" data-i18n="footer.careers">Careers</a>
+      </div>
+      <div class="footer-col">
+        <h5 data-i18n="footer.helpCenter">Help Center</h5>
+        <a href="#" data-i18n="footer.shippingInfo">Shipping Info</a>
+        <a href="#" data-i18n="footer.returns">Returns &amp; Exchanges</a>
+        <a href="#" data-i18n="footer.faq">FAQ</a>
+        <a href="#" data-i18n="footer.contactUs">Contact Us</a>
+      </div>
+      <div class="footer-col">
+        <h5 data-i18n="footer.followUs">Follow Us</h5>
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Pinterest</a>
+      </div>
+      <div class="footer-col">
+        <h5 data-i18n="footer.newsletter">Newsletter</h5>
+        <form class="subscribe-form footer-subscribe">
+          <input type="email" data-i18n-placeholder="footer.emailPlaceholder" placeholder="Email address" required>
+          <button type="submit" class="btn btn-light" data-i18n="footer.subscribe">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-i18n="footer.copyright">&copy; 2026 MYK Jewelry. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Account modal (shown to signed-out visitors who click the account icon) -->
+  <div class="auth-modal-overlay" id="authModalOverlay">
+    <div class="auth-modal">
+      <button class="auth-modal-close" id="authModalClose" aria-label="Close">&times;</button>
+      <div class="account-tabs">
+        <button class="account-tab active" data-modal-tab="login">Sign In</button>
+        <button class="account-tab" data-modal-tab="register">Create Account</button>
+      </div>
+
+      <form id="modalLoginForm" class="account-form">
+        <div class="form-field">
+          <label for="modalLoginEmail">Email</label>
+          <input type="email" id="modalLoginEmail" required>
+        </div>
+        <div class="form-field">
+          <label for="modalLoginPassword">Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="modalLoginPassword" required>
+            <button type="button" class="password-toggle" data-target="modalLoginPassword" aria-label="Show password"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </div>
+        </div>
+        <p class="account-error" id="modalLoginError"></p>
+        <button type="submit" class="btn btn-dark" style="width:100%;">Sign In</button>
+      </form>
+
+      <form id="modalRegisterForm" class="account-form" style="display:none;">
+        <div class="form-field">
+          <label for="modalRegisterName">Full Name</label>
+          <input type="text" id="modalRegisterName" required>
+        </div>
+        <div class="form-field">
+          <label for="modalRegisterEmail">Email</label>
+          <input type="email" id="modalRegisterEmail" required>
+        </div>
+        <div class="form-field">
+          <label for="modalRegisterPassword">Password</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="modalRegisterPassword" minlength="6" required>
+            <button type="button" class="password-toggle" data-target="modalRegisterPassword" aria-label="Show password"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="modalRegisterCountry">Country / Region</label>
+          <input type="text" id="modalRegisterCountry" required>
+        </div>
+        <div class="form-field">
+          <label for="modalRegisterBuyerManager">Buyer Manager <span style="font-weight:400; color:var(--color-text-muted);">(optional)</span></label>
+          <input type="text" id="modalRegisterBuyerManager">
+        </div>
+        <p class="account-error" id="modalRegisterError"></p>
+        <button type="submit" class="btn btn-dark" style="width:100%;">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cart drawer -->
+  <!-- Orders drawer -->
+  <div class="cart-drawer-overlay" id="ordersDrawerOverlay"></div>
+  <aside class="cart-drawer" id="ordersDrawer">
+    <div class="cart-drawer-header">
+      <h2>My Orders</h2>
+      <button class="cart-drawer-close" id="ordersDrawerClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="cart-drawer-items order-history-list" id="ordersDrawerItems"></div>
+  </aside>
+
+  <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <h2>Your Bag</h2>
+      <button class="cart-drawer-close" id="cartDrawerClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="cart-drawer-items" id="cartDrawerItems"></div>
+    <div class="cart-drawer-footer">
+      <div class="cart-drawer-subtotal">
+        <span>Subtotal</span>
+        <span id="cartDrawerSubtotal">$0.00</span>
+      </div>
+      <a href="cart.html" class="btn btn-dark" style="width:100%; display:block; text-align:center;">View Bag &amp; Checkout</a>
+    </div>
+  </aside>
+
+  <script src="js/cart.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/i18n.js"></script>
+  <script>renderProductDetail();</script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分类管理 | MYK 管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body data-page="categories">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">MYK</div>
+      <div class="admin-logo-sub">管理后台</div>
+      <nav class="admin-nav">
+        <a href="index.html">仪表盘</a>
+        <a href="layout.html">页面布局</a>
+        <a href="products.html">商品管理</a>
+        <a href="categories.html" class="active">分类管理</a>
+        <a href="orders.html">订单管理</a>
+        <a href="languages.html">语言管理</a>
+        <a href="customers.html">客户管理</a>
+        <div class="view-site">
+          <a href="../index.html" target="_blank">查看前台 &rarr;</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <div>
+          <h1>分类管理</h1>
+          <p>分类用于导航菜单和首页"按分类选购"板块</p>
+        </div>
+        <button class="btn" id="addCategoryBtn">+ 添加分类</button>
+      </div>
+
+      <div class="panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>图片</th>
+              <th>名称</th>
+              <th>别名</th>
+              <th>父级分类</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="categoryRows"></tbody>
+        </table>
+        <div class="empty-state" id="categoryEmpty" style="display:none;">暂无分类。</div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add / Edit modal -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal">
+      <h2 id="categoryModalTitle">添加分类</h2>
+      <form id="categoryForm">
+        <input type="hidden" id="categoryId">
+        <div class="form-field">
+          <label>名称</label>
+          <input type="text" id="categoryName" required>
+        </div>
+        <div class="form-field">
+          <label>父级分类</label>
+          <select id="categoryParent">
+            <option value="">无（顶级分类）</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>图片</label>
+          <img class="image-preview" id="categoryImagePreview" style="display:none;">
+          <input type="file" id="categoryImage" accept="image/*">
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn-outline" id="categoryCancelBtn">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/categories.js"></script>
+</body>
+</html>

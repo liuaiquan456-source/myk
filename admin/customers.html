@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客户管理 | MYK 管理后台</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body data-page="customers">
+  <div class="admin-shell">
+    <aside class="admin-sidebar">
+      <div class="admin-logo">MYK</div>
+      <div class="admin-logo-sub">管理后台</div>
+      <nav class="admin-nav">
+        <a href="index.html">仪表盘</a>
+        <a href="layout.html">页面布局</a>
+        <a href="products.html">商品管理</a>
+        <a href="categories.html">分类管理</a>
+        <a href="orders.html">订单管理</a>
+        <a href="languages.html">语言管理</a>
+        <a href="customers.html" class="active">客户管理</a>
+        <div class="view-site">
+          <a href="../index.html" target="_blank">查看前台 &rarr;</a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <div>
+          <h1>客户管理</h1>
+          <p>管理分销商档案，以及买家在前台自主注册的账号</p>
+        </div>
+      </div>
+
+      <div class="admin-tabs">
+        <button type="button" class="admin-tab active" data-tab="distributors">分销商管理</button>
+        <button type="button" class="admin-tab" data-tab="buyers">买家账号管理</button>
+      </div>
+
+      <!-- 分销商管理 -->
+      <section class="admin-tab-panel active" id="tab-distributors">
+        <div class="panel">
+          <div class="admin-header" style="margin-bottom:1rem;">
+            <div>
+              <h2 style="margin:0;">分销商列表</h2>
+              <p style="color:var(--color-text-muted); font-size:0.85rem; margin-top:0.25rem;">记录分销商的微信、WhatsApp 和国家/地区地址</p>
+            </div>
+            <button class="btn" id="addDistributorBtn">+ 添加分销商</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>名称</th>
+                <th>微信</th>
+                <th>WhatsApp</th>
+                <th>国家/地区</th>
+                <th>地址</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="distributorRows"></tbody>
+          </table>
+          <div class="empty-state" id="distributorEmpty" style="display:none;">暂无分销商，点击"添加分销商"新建。</div>
+        </div>
+      </section>
+
+      <!-- 买家账号管理 -->
+      <section class="admin-tab-panel" id="tab-buyers">
+        <div class="panel">
+          <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:1rem;">
+            买家在前台"我的账户"页面自主注册的账号会显示在这里，可以为每个买家设置所属分销商
+          </p>
+          <div class="form-field" style="max-width:280px;">
+            <label>按分销商筛选</label>
+            <select id="distributorFilter">
+              <option value="">全部</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>姓名</th>
+                <th>邮箱</th>
+                <th>国家/地区</th>
+                <th>分销商</th>
+                <th>收货地址</th>
+                <th>注册时间</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="customerRows"></tbody>
+          </table>
+          <div class="empty-state" id="customerEmpty" style="display:none;">暂无买家账号。</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 分销商编辑弹窗 -->
+  <div class="modal-overlay" id="distributorModal">
+    <div class="modal">
+      <h2 id="distributorModalTitle">添加分销商</h2>
+      <form id="distributorForm">
+        <input type="hidden" id="distributorId">
+        <div class="form-field">
+          <label>名称</label>
+          <input type="text" id="distributorName" required>
+        </div>
+        <div class="form-field">
+          <label>微信</label>
+          <input type="text" id="distributorWechat">
+        </div>
+        <div class="form-field">
+          <label>WhatsApp</label>
+          <input type="text" id="distributorWhatsapp">
+        </div>
+        <div class="form-field">
+          <label>国家/地区</label>
+          <input type="text" id="distributorCountry">
+        </div>
+        <div class="form-field">
+          <label>地址</label>
+          <textarea id="distributorAddress" rows="2"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn-outline" id="distributorCancelBtn">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 买家编辑弹窗 -->
+  <div class="modal-overlay" id="customerModal">
+    <div class="modal">
+      <h2>编辑买家信息</h2>
+      <form id="customerForm">
+        <input type="hidden" id="customerId">
+        <div class="form-field">
+          <label>姓名</label>
+          <input type="text" id="customerName" required>
+        </div>
+        <div class="form-field">
+          <label>国家/地区</label>
+          <input type="text" id="customerCountry">
+        </div>
+        <div class="form-field">
+          <label>分销商 <span style="font-weight:400; color:var(--color-text-muted);">（该买家所属的分销商，选填）</span></label>
+          <select id="customerBuyerManager">
+            <option value="">无</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>收货地址</label>
+          <textarea id="customerAddress" rows="2"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn-outline" id="customerCancelBtn">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script src="js/customers.js"></script>
+</body>
+</html>
