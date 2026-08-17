@@ -5,6 +5,18 @@ const crypto = require('crypto');
 const DB_PATH = path.join(__dirname, 'data', 'db.json');
 const DB_EXAMPLE_PATH = path.join(__dirname, 'data', 'db.example.json');
 
+// Seed for currencies on db.json files created before the currency feature
+// existed — load() below backfills this in rather than requiring a fresh
+// clone/bootstrap on already-deployed instances.
+const DEFAULT_CURRENCIES = [
+  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥', rate: 1 },
+  { code: 'USD', name: 'US Dollar', symbol: '$', rate: 0.14 },
+  { code: 'EUR', name: 'Euro', symbol: '€', rate: 0.13 },
+  { code: 'CAD', name: 'Canadian Dollar', symbol: 'CA$', rate: 0.19 },
+  { code: 'JPY', name: 'Japanese Yen', symbol: '¥', rate: 20.5 },
+  { code: 'INR', name: 'Indian Rupee', symbol: '₹', rate: 11.9 },
+];
+
 // db.json holds real customer data and is gitignored — on a fresh clone it
 // won't exist yet, so bootstrap it from the sanitized example on first run.
 function load() {
@@ -12,7 +24,15 @@ function load() {
     fs.copyFileSync(DB_EXAMPLE_PATH, DB_PATH);
   }
   const raw = fs.readFileSync(DB_PATH, 'utf-8');
-  return JSON.parse(raw);
+  const db = JSON.parse(raw);
+
+  // Backfill fields added after this db.json was first created.
+  if (!db.currencies) {
+    db.currencies = DEFAULT_CURRENCIES;
+    save(db);
+  }
+
+  return db;
 }
 
 function save(db) {
