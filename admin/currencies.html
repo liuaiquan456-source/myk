@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>分类管理 | MYK 管理后台</title>
+<title>货币管理 | MYK 管理后台</title>
 <link rel="stylesheet" href="css/admin.css">
 </head>
-<body data-page="categories">
+<body data-page="currencies">
   <div class="admin-shell">
     <aside class="admin-sidebar">
       <div class="admin-logo">MYK</div>
@@ -15,10 +15,10 @@
         <a href="index.html">仪表盘</a>
         <a href="layout.html">页面布局</a>
         <a href="products.html">商品管理</a>
-        <a href="categories.html" class="active">分类管理</a>
+        <a href="categories.html">分类管理</a>
         <a href="orders.html">订单管理</a>
         <a href="languages.html">语言管理</a>
-        <a href="currencies.html">货币管理</a>
+        <a href="currencies.html" class="active">货币管理</a>
         <a href="customers.html">客户管理</a>
         <div class="view-site">
           <a href="../index.html" target="_blank">查看前台 &rarr;</a>
@@ -29,60 +29,60 @@
     <main class="admin-main">
       <div class="admin-header">
         <div>
-          <h1>分类管理</h1>
-          <p>分类用于导航菜单和首页"按分类选购"板块</p>
+          <h1>货币管理</h1>
+          <p>管理前台支持的货币及汇率。汇率以人民币（CNY）为基准，表示 1 CNY 兑换多少该货币。商品价格以 USD 存储，换算时统一经由 CNY 中转。</p>
         </div>
-        <button class="btn" id="addCategoryBtn">+ 添加分类</button>
+        <button class="btn" id="addCurrencyBtn">+ 添加货币</button>
       </div>
 
       <div class="panel">
+        <h2>已启用的货币</h2>
         <table class="data-table">
           <thead>
             <tr>
-              <th>图片</th>
+              <th>代码</th>
               <th>名称</th>
-              <th>别名</th>
-              <th>父级分类</th>
+              <th>符号</th>
+              <th>汇率（1 CNY = ?）</th>
               <th></th>
             </tr>
           </thead>
-          <tbody id="categoryRows"></tbody>
+          <tbody id="currencyRows"></tbody>
         </table>
-        <div class="empty-state" id="categoryEmpty" style="display:none;">暂无分类。</div>
       </div>
     </main>
   </div>
 
-  <!-- Add / Edit modal -->
-  <div class="modal-overlay" id="categoryModal">
+  <!-- Add currency modal -->
+  <div class="modal-overlay" id="currencyModal">
     <div class="modal">
-      <h2 id="categoryModalTitle">添加分类</h2>
-      <form id="categoryForm">
-        <input type="hidden" id="categoryId">
+      <h2>添加货币</h2>
+      <form id="currencyForm">
         <div class="form-field">
-          <label>名称</label>
-          <input type="text" id="categoryName" required>
+          <label>货币代码（如 GBP、AUD）</label>
+          <input type="text" id="currencyCode" required maxlength="5">
         </div>
         <div class="form-field">
-          <label>父级分类</label>
-          <select id="categoryParent">
-            <option value="">无（顶级分类）</option>
-          </select>
+          <label>名称（如 British Pound）</label>
+          <input type="text" id="currencyName" required>
         </div>
         <div class="form-field">
-          <label>图片</label>
-          <img class="image-preview" id="categoryImagePreview" style="display:none;">
-          <input type="file" id="categoryImage" accept="image/*">
+          <label>符号（如 £）</label>
+          <input type="text" id="currencySymbol" required maxlength="5">
+        </div>
+        <div class="form-field">
+          <label>汇率（1 CNY 兑换多少该货币）</label>
+          <input type="number" id="currencyRate" step="0.0001" min="0" required>
         </div>
         <div class="form-actions">
           <button type="submit" class="btn">保存</button>
-          <button type="button" class="btn btn-outline" id="categoryCancelBtn">取消</button>
+          <button type="button" class="btn btn-outline" id="currencyCancelBtn">取消</button>
         </div>
       </form>
     </div>
   </div>
 
   <script src="js/admin.js"></script>
-  <script src="js/categories.js"></script>
+  <script src="js/currencies.js"></script>
 </body>
 </html>

@@ -517,6 +517,57 @@ app.get('/api/customers/:id/orders', (req, res) => {
   res.json(orders);
 });
 
+// ---------- Currencies ----------
+
+app.get('/api/currencies', (req, res) => {
+  const db = load();
+  res.json(db.currencies);
+});
+
+app.post('/api/currencies', (req, res) => {
+  const db = load();
+  const { code, name, symbol, rate } = req.body;
+  if (!code || !name || !symbol || rate === undefined) {
+    return res.status(400).json({ error: 'code, name, symbol and rate are required' });
+  }
+  if (db.currencies.some((c) => c.code === code)) {
+    return res.status(400).json({ error: 'A currency with this code already exists' });
+  }
+
+  db.currencies.push({ code, name, symbol, rate: Number(rate) });
+  save(db);
+  res.status(201).json({ code, name, symbol, rate: Number(rate) });
+});
+
+app.put('/api/currencies/:code', (req, res) => {
+  const db = load();
+  const code = req.params.code;
+  const currency = db.currencies.find((c) => c.code === code);
+  if (!currency) return res.status(404).json({ error: 'Currency not found' });
+
+  const { name, symbol, rate } = req.body;
+  if (name !== undefined) currency.name = name;
+  if (symbol !== undefined) currency.symbol = symbol;
+  if (rate !== undefined && code !== 'CNY') currency.rate = Number(rate);
+  save(db);
+  res.json(currency);
+});
+
+app.delete('/api/currencies/:code', (req, res) => {
+  const db = load();
+  const code = req.params.code;
+  if (code === 'CNY' || code === 'USD') {
+    return res.status(400).json({ error: 'CNY and USD cannot be deleted' });
+  }
+
+  const exists = db.currencies.some((c) => c.code === code);
+  if (!exists) return res.status(404).json({ error: 'Currency not found' });
+
+  db.currencies = db.currencies.filter((c) => c.code !== code);
+  save(db);
+  res.status(204).end();
+});
+
 // ---------- Languages ----------
 
 app.get('/api/locales', (req, res) => {

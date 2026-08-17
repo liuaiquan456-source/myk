@@ -775,6 +775,44 @@
   "nextCategoryId": 21,
   "nextProductId": 82,
   "nextOrderId": 1,
+  "currencies": [
+    {
+      "code": "CNY",
+      "name": "Chinese Yuan",
+      "symbol": "¥",
+      "rate": 1
+    },
+    {
+      "code": "USD",
+      "name": "US Dollar",
+      "symbol": "$",
+      "rate": 0.14
+    },
+    {
+      "code": "EUR",
+      "name": "Euro",
+      "symbol": "€",
+      "rate": 0.13
+    },
+    {
+      "code": "CAD",
+      "name": "Canadian Dollar",
+      "symbol": "CA$",
+      "rate": 0.19
+    },
+    {
+      "code": "JPY",
+      "name": "Japanese Yen",
+      "symbol": "¥",
+      "rate": 20.5
+    },
+    {
+      "code": "INR",
+      "name": "Indian Rupee",
+      "symbol": "₹",
+      "rate": 11.9
+    }
+  ],
   "locales": [
     {
       "code": "en",

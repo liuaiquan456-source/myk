@@ -10,6 +10,10 @@ async function fetchJSON(url) {
   return res.json();
 }
 
+function priceText(usdAmount) {
+  return window.formatPrice ? window.formatPrice(usdAmount) : `$${Number(usdAmount).toFixed(2)}`;
+}
+
 function colorsToPlaceholder(colors) {
   if (!colors || colors.length === 0) return 'placeholder-gold';
   if (colors.length > 1) return 'placeholder-mixed';
@@ -48,11 +52,12 @@ function renderProductImage(product) {
 }
 
 function renderProductCard(product) {
+  const price = minSkuPrice(product);
   return `
     <div class="product-card" data-product-id="${product.id}">
       ${renderProductImage(product)}
       <p class="product-name">${escapeHtmlLocal(product.name)}</p>
-      <p class="product-price">$${minSkuPrice(product).toFixed(2)}</p>
+      <p class="product-price" data-price-usd="${price}">${priceText(price)}</p>
     </div>
   `;
 }
@@ -62,6 +67,7 @@ function renderListingProductCard(product) {
   const actionKey = soldOut ? 'listing.notifyMe' : 'listing.addToBag';
   const actionText = soldOut ? 'Notify Me' : '+ Add to Bag';
   const actionAttr = soldOut ? '' : `data-quick-add="${product.id}"`;
+  const price = minSkuPrice(product);
   const swatches = (product.colors || [])
     .map((c) => `<span class="swatch placeholder-${c === 'silver' ? 'silver' : 'gold'}"></span>`)
     .join('');
@@ -70,7 +76,7 @@ function renderListingProductCard(product) {
       ${renderProductImage(product)}
       <p class="product-action" data-i18n="${actionKey}" ${actionAttr}>${actionText}</p>
       <p class="product-name">${escapeHtmlLocal(product.name)}</p>
-      <p class="product-price">$${minSkuPrice(product).toFixed(2)}</p>
+      <p class="product-price" data-price-usd="${price}">${priceText(price)}</p>
       <div class="color-swatches">${swatches}</div>
     </div>
   `;
@@ -153,6 +159,7 @@ async function renderHomepage() {
 
   enhanceProductCards(container);
   if (window.reapplyI18n) window.reapplyI18n();
+  if (window.reapplyCurrency) window.reapplyCurrency();
 }
 
 // ---------- New In / category listing ----------
@@ -195,6 +202,7 @@ async function renderNewIn() {
       : '<p style="grid-column: 1 / -1; color: var(--color-text-muted);">No products found.</p>';
     enhanceProductCards(grid);
     if (window.reapplyI18n) window.reapplyI18n();
+    if (window.reapplyCurrency) window.reapplyCurrency();
   }
 
   if (tagFilterBar) {
@@ -249,24 +257,28 @@ function renderBundleSection(product, allProducts) {
         <input type="checkbox" data-bundle-check checked>
         <span class="pdp-bundle-item-name">${label}</span>
         ${showVariant ? `<select class="pdp-bundle-item-variant" data-bundle-variant>${skus.map((s) => `<option value="${s.id || ''}" data-price="${s.price}">${escapeHtmlLocal(s.color || 'Default')}</option>`).join('')}</select>` : ''}
-        <span class="pdp-bundle-item-price" data-bundle-price>$${Number(skus[0].price).toFixed(2)}</span>
+        <span class="pdp-bundle-item-price" data-bundle-price data-price-usd="${skus[0].price}">${priceText(skus[0].price)}</span>
       </div>
     `;
   }).join('');
 
   function recomputeBundleTotal() {
-    let total = 0;
+    let totalUsd = 0;
     document.querySelectorAll('#pdpBundleList .pdp-bundle-item').forEach((row) => {
       if (!row.querySelector('[data-bundle-check]').checked) return;
-      total += Number(row.querySelector('[data-bundle-price]').textContent.replace('$', '')) || 0;
+      totalUsd += Number(row.querySelector('[data-bundle-price]').dataset.priceUsd) || 0;
     });
-    document.getElementById('pdpBundleTotal').textContent = `$${total.toFixed(2)}`;
+    const totalEl = document.getElementById('pdpBundleTotal');
+    totalEl.dataset.priceUsd = totalUsd;
+    totalEl.textContent = priceText(totalUsd);
   }
 
   document.getElementById('pdpBundleList').addEventListener('change', (e) => {
     if (e.target.matches('[data-bundle-variant]')) {
       const price = Number(e.target.selectedOptions[0].dataset.price) || 0;
-      e.target.closest('.pdp-bundle-item').querySelector('[data-bundle-price]').textContent = `$${price.toFixed(2)}`;
+      const priceEl = e.target.closest('.pdp-bundle-item').querySelector('[data-bundle-price]');
+      priceEl.dataset.priceUsd = price;
+      priceEl.textContent = priceText(price);
     }
     recomputeBundleTotal();
   });
@@ -309,9 +321,11 @@ async function renderProductDetail() {
   document.getElementById('breadcrumbName').textContent = product.name;
 
   document.getElementById('pdpTitle').textContent = product.name;
-  document.getElementById('pdpPriceValue').textContent = `$${Number(product.price).toFixed(2)}`;
+  const pdpPriceEl = document.getElementById('pdpPriceValue');
+  pdpPriceEl.dataset.priceUsd = product.price;
+  pdpPriceEl.textContent = priceText(product.price);
   document.getElementById('pdpInstallment').innerHTML =
-    `4 payments of $${(product.price / 4).toFixed(2)} at 0% interest with <strong>Klarna</strong>`;
+    `4 payments of <span data-price-usd="${product.price / 4}">${priceText(product.price / 4)}</span> at 0% interest with <strong>Klarna</strong>`;
 
   // Size variants — admin-defined per product; hide the selector entirely
   // when a product doesn't have any (most jewelry doesn't need one).
@@ -364,9 +378,11 @@ async function renderProductDetail() {
 
   function selectSku(sku) {
     document.getElementById('colorValue').textContent = sku.color[0].toUpperCase() + sku.color.slice(1);
-    document.getElementById('pdpPriceValue').textContent = `$${Number(sku.price).toFixed(2)}`;
+    const skuPriceEl = document.getElementById('pdpPriceValue');
+    skuPriceEl.dataset.priceUsd = sku.price;
+    skuPriceEl.textContent = priceText(sku.price);
     document.getElementById('pdpInstallment').innerHTML =
-      `4 payments of $${(sku.price / 4).toFixed(2)} at 0% interest with <strong>Klarna</strong>`;
+      `4 payments of <span data-price-usd="${sku.price / 4}">${priceText(sku.price / 4)}</span> at 0% interest with <strong>Klarna</strong>`;
     if (addBtn) addBtn.dataset.skuId = sku.id || '';
     if (sku.image) {
       pdpMainImage.className = 'pdp-main-image';
@@ -458,7 +474,7 @@ async function renderCartPage() {
         <div>
           <p class="cart-item-name">${escapeHtmlLocal(line.product.name)}</p>
           ${line.sku ? `<p class="cart-item-color">${line.sku.color[0].toUpperCase() + line.sku.color.slice(1)}</p>` : ''}
-          <p class="cart-item-price">$${Number(linePrice(line)).toFixed(2)} each</p>
+          <p class="cart-item-price"><span data-price-usd="${linePrice(line)}">${priceText(linePrice(line))}</span> each</p>
           <div class="cart-qty">
             <button type="button" data-qty-action="decrease" aria-label="Decrease quantity">&minus;</button>
             <span>${line.quantity}</span>
@@ -466,14 +482,16 @@ async function renderCartPage() {
           </div>
         </div>
         <div class="cart-item-right">
-          <p class="cart-item-line-total">$${(linePrice(line) * line.quantity).toFixed(2)}</p>
+          <p class="cart-item-line-total" data-price-usd="${linePrice(line) * line.quantity}">${priceText(linePrice(line) * line.quantity)}</p>
           <button type="button" class="cart-item-remove" data-remove>Remove</button>
         </div>
       </div>
     `).join('');
 
     const subtotal = lines.reduce((sum, line) => sum + linePrice(line) * line.quantity, 0);
-    document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+    const subtotalEl = document.getElementById('cartSubtotal');
+    subtotalEl.dataset.priceUsd = subtotal;
+    subtotalEl.textContent = priceText(subtotal);
   }
 
   document.getElementById('cartItems').addEventListener('click', (e) => {
@@ -530,7 +548,7 @@ async function renderCartPage() {
       emptyState.style.display = 'none';
       document.getElementById('orderConfirmation').style.display = 'block';
       document.getElementById('orderConfirmationDetail').textContent =
-        `Order #${order.id} — $${order.total.toFixed(2)} total. A confirmation has been sent to ${order.customer.email}.`;
+        `Order #${order.id} — ${priceText(order.total)} total. A confirmation has been sent to ${order.customer.email}.`;
     } catch (err) {
       alert(err.message);
     }
@@ -625,7 +643,7 @@ function renderOrderHistoryCard(order) {
           </div>
         `).join('')}
       </div>
-      <div class="order-history-total">$${Number(order.total).toFixed(2)}</div>
+      <div class="order-history-total" data-price-usd="${order.total}">${priceText(order.total)}</div>
     </div>
   `;
 }
@@ -836,7 +854,8 @@ async function renderCartDrawerContents() {
   const cart = getCart();
   if (!cart.length) {
     container.innerHTML = '<p class="account-empty-note">Your bag is empty.</p>';
-    subtotalEl.textContent = '$0.00';
+    subtotalEl.dataset.priceUsd = 0;
+    subtotalEl.textContent = priceText(0);
     return;
   }
 
@@ -855,12 +874,13 @@ async function renderCartDrawerContents() {
         <div>
           <p class="cart-drawer-line-name">${escapeHtmlLocal(product.name)}</p>
           ${sku ? `<p class="cart-drawer-line-color">${sku.color[0].toUpperCase() + sku.color.slice(1)}</p>` : ''}
-          <p class="cart-drawer-line-price">${item.quantity} &times; $${price.toFixed(2)}</p>
+          <p class="cart-drawer-line-price">${item.quantity} &times; <span data-price-usd="${price}">${priceText(price)}</span></p>
         </div>
       </div>
     `;
   }).join('');
-  subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+  subtotalEl.dataset.priceUsd = subtotal;
+  subtotalEl.textContent = priceText(subtotal);
 }
 
 initCartDrawer();
