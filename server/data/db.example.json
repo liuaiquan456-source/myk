@@ -17,7 +17,7 @@
     {
       "id": 10,
       "name": "Earrings",
-      "slug": "earrings",
+      "slug": "brand-earrings",
       "image": null,
       "parentId": 9
     },
@@ -31,21 +31,21 @@
     {
       "id": 12,
       "name": "Bangle",
-      "slug": "bangle",
+      "slug": "brand-bangle",
       "image": null,
       "parentId": 9
     },
     {
       "id": 13,
       "name": "Bracelet",
-      "slug": "bracelet",
+      "slug": "brand-bracelet",
       "image": null,
       "parentId": 9
     },
     {
       "id": 14,
       "name": "Ring",
-      "slug": "ring",
+      "slug": "brand-ring",
       "image": null,
       "parentId": 9
     },

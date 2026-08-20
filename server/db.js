@@ -48,6 +48,20 @@ function slugify(name) {
     .replace(/(^-|-$)/g, '');
 }
 
+// Category slug is the sole join key between products/categories throughout
+// this app (URLs, admin selects, API filters) — two categories sharing a slug
+// become indistinguishable everywhere, so every slug must be unique across
+// the whole tree, not just among siblings.
+function uniqueSlug(base, existingSlugs) {
+  let slug = base;
+  let i = 2;
+  while (existingSlugs.includes(slug)) {
+    slug = `${base}-${i}`;
+    i += 1;
+  }
+  return slug;
+}
+
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString('hex');
   const hash = crypto.scryptSync(password, salt, 64).toString('hex');
@@ -60,4 +74,4 @@ function verifyPassword(password, stored) {
   return hash === check;
 }
 
-module.exports = { load, save, slugify, hashPassword, verifyPassword };
+module.exports = { load, save, slugify, uniqueSlug, hashPassword, verifyPassword };

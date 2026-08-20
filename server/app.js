@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
-const { load, save, slugify, hashPassword, verifyPassword } = require('./db');
+const { load, save, slugify, uniqueSlug, hashPassword, verifyPassword } = require('./db');
 
 const ROOT = path.join(__dirname, '..');
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
@@ -60,7 +60,7 @@ app.post('/api/categories', upload.single('image'), (req, res) => {
   const category = {
     id: db.nextCategoryId++,
     name,
-    slug: slugify(name),
+    slug: uniqueSlug(slugify(name), db.categories.map((c) => c.slug)),
     image: req.file ? `/uploads/${req.file.filename}` : null,
     parentId: parseParentId(req.body.parentId),
   };
@@ -76,7 +76,8 @@ app.put('/api/categories/:id', upload.single('image'), (req, res) => {
 
   if (req.body.name) {
     category.name = req.body.name.trim();
-    category.slug = slugify(category.name);
+    const otherSlugs = db.categories.filter((c) => c.id !== category.id).map((c) => c.slug);
+    category.slug = uniqueSlug(slugify(category.name), otherSlugs);
   }
   if (req.body.parentId !== undefined) category.parentId = parseParentId(req.body.parentId);
   if (req.file) category.image = `/uploads/${req.file.filename}`;
