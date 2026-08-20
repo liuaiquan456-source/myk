@@ -50,10 +50,18 @@ function enhanceProductCards(root = document) {
     btn.className = 'wishlist-btn';
     btn.setAttribute('aria-label', 'Add to wishlist');
     btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M12 20s-7-4.5-9.3-9C1 7.5 3 4 6.5 4c2 0 3.5 1.2 4.5 2.7C12 5.2 13.5 4 15.5 4 19 4 21 7.5 19.3 11 17 15.5 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+    const cardProductId = Number(image.closest('.product-card')?.dataset.productId);
+    if (cardProductId && typeof isInWishlist === 'function' && isInWishlist(cardProductId)) {
+      btn.classList.add('active');
+    }
     btn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      btn.classList.toggle('active');
+      if (cardProductId && typeof toggleWishlist === 'function') {
+        btn.classList.toggle('active', toggleWishlist(cardProductId));
+      } else {
+        btn.classList.toggle('active');
+      }
     });
     image.appendChild(btn);
   });
@@ -136,9 +144,16 @@ document.querySelectorAll('.accordion-trigger').forEach((trigger) => {
   });
 });
 
-// Product detail page: standalone wishlist button
+// Product detail page: standalone wishlist button. Its data-product-id is set
+// by renderProductDetail() (store.js) once the product finishes loading.
 document.querySelector('.pdp-wishlist')?.addEventListener('click', (e) => {
-  e.currentTarget.classList.toggle('active');
+  const btn = e.currentTarget;
+  const productId = Number(btn.dataset.productId);
+  if (productId && typeof toggleWishlist === 'function') {
+    btn.classList.toggle('active', toggleWishlist(productId));
+  } else {
+    btn.classList.toggle('active');
+  }
 });
 
 // Product detail page: add to bag
@@ -147,9 +162,15 @@ document.querySelector('.pdp-add-btn')?.addEventListener('click', (e) => {
   const productId = Number(btn.dataset.productId);
   if (!productId) return;
   const skuId = btn.dataset.skuId || null;
-  addToCart(productId, parseInt(qtyValue.textContent, 10), skuId);
+  const activeSizeBtn = document.querySelector('#sizeOptions .pdp-size-btn.active');
+  const size = activeSizeBtn ? activeSizeBtn.textContent.trim() : null;
+  addToCart(productId, parseInt(qtyValue.textContent, 10), skuId, size);
   playAddedAnimation(btn);
-  if (window.openCartDrawer) window.openCartDrawer();
+  // Give the green "Added" flash a moment on screen before the drawer
+  // slides in and covers it — opening instantly made the animation invisible.
+  setTimeout(() => {
+    if (window.openCartDrawer) window.openCartDrawer();
+  }, 500);
 });
 
 function playAddedAnimation(btn) {

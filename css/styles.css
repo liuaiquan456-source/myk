@@ -286,7 +286,8 @@ img {
   align-items: center;
 }
 
-.cart-count {
+.cart-count,
+.wishlist-count {
   position: absolute;
   top: -8px;
   right: -8px;
@@ -610,6 +611,38 @@ img {
   opacity: 1;
 }
 
+/* Skeleton shimmer shown on an image (or a background-image element) while
+   the real photo is still loading — see js/store.js and js/main.js, which
+   toggle this class off once the image's load/error event fires. */
+@keyframes img-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.img-loading {
+  /* !important: this state class is applied alongside element-specific
+     classes (.pdp-main-image, .pdp-thumb, …) that set their own
+     background-size/position for the real photo — the shimmer must win
+     over those regardless of stylesheet order. */
+  background-image: linear-gradient(100deg, var(--color-bg-alt) 30%, var(--color-border) 50%, var(--color-bg-alt) 70%) !important;
+  background-size: 300% 100% !important;
+  background-position: 0 0 !important;
+  animation: img-shimmer 1.3s ease-in-out infinite;
+}
+
+img.img-loading {
+  opacity: 0;
+}
+
+img.product-image-photo,
+img.product-image-alt-photo,
+img.shop-by-image-photo,
+.cart-item-image img,
+.order-history-item img,
+.cart-drawer-line img {
+  transition: opacity 0.3s ease;
+}
+
 .badge-sale {
   background: #b5473c;
 }
@@ -927,25 +960,10 @@ img {
   margin-bottom: 0.6rem;
 }
 
-.pdp-rating {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
+.pdp-material {
   font-size: 0.85rem;
-}
-
-.stars {
-  color: var(--color-gold-dark);
-  letter-spacing: 1px;
-}
-
-.stars.large {
-  font-size: 1.4rem;
-}
-
-.pdp-rating-count {
   color: var(--color-text-muted);
+  margin-bottom: 0.8rem;
 }
 
 .pdp-price {
@@ -954,7 +972,7 @@ img {
   margin-bottom: 0.3rem;
 }
 
-.pdp-installment {
+.pdp-code {
   font-size: 0.82rem;
   color: var(--color-text-muted);
   margin-bottom: 1.5rem;
@@ -1189,6 +1207,61 @@ img {
 @media (max-width: 900px) {
   .main-nav {
     display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 16px 24px rgba(0, 0, 0, 0.1);
+    padding: 0.3rem 1.5rem;
+    max-height: calc(100vh - 100%);
+    overflow-y: auto;
+  }
+  .main-nav.open {
+    display: flex;
+  }
+  .main-nav > a {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .main-nav > a:last-child {
+    border-bottom: none;
+  }
+  #navCategoryLinks {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  .nav-item-has-menu {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .nav-item-has-menu::after {
+    display: none;
+  }
+  .nav-item-has-menu > a {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  /* Hover doesn't exist on touch, so category submenus stay expanded inline
+     instead of relying on :hover to reveal them. */
+  .nav-category-dropdown {
+    display: flex !important;
+    position: static;
+    flex-direction: column;
+    margin: 0 0 0.4rem;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    min-width: 0;
+  }
+  .nav-category-dropdown a {
+    padding: 0.7rem 0 0.7rem 1rem;
+    border-bottom: 1px solid var(--color-border);
   }
   .menu-toggle {
     display: flex;

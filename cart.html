@@ -40,22 +40,17 @@
           </button>
           <div class="lang-switcher-menu" id="langSwitcherMenu"></div>
         </div>
-        <div class="lang-switcher currency-switcher">
-          <button class="lang-switcher-trigger" id="currencySwitcherTrigger">
-            <span id="currentCurrencyLabel">USD $</span>
-            <svg viewBox="0 0 24 24" width="10" height="10"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-          </button>
-          <div class="lang-switcher-menu" id="currencySwitcherMenu"></div>
-        </div>
+        <span class="header-currency">United States (USD $) <svg viewBox="0 0 24 24" width="10" height="10"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></span>
         <button aria-label="Orders" class="icon-btn" id="ordersIcon">
           <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 8l9-5 9 5-9 5-9-5z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 8v9l9 5 9-5V8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 13v9" stroke="currentColor" stroke-width="1.6"/></svg>
         </button>
         <a href="account.html" id="accountIcon" aria-label="Account" class="icon-btn">
           <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 21c1.5-4.5 5-6 8-6s6.5 1.5 8 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
         </a>
-        <button aria-label="Wishlist" class="icon-btn">
+        <a href="wishlist.html" aria-label="Wishlist" class="icon-btn">
           <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 20s-7-4.5-9.3-9C1 7.5 3 4 6.5 4c2 0 3.5 1.2 4.5 2.7C12 5.2 13.5 4 15.5 4 19 4 21 7.5 19.3 11 17 15.5 12 20 12 20z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
-        </button>
+          <span class="wishlist-count">0</span>
+        </a>
         <a href="cart.html" aria-label="Cart" class="icon-btn">
           <svg viewBox="0 0 24 24" width="18" height="18"><path d="M4 6h16l-1.5 10.5a2 2 0 01-2 1.5H7.5a2 2 0 01-2-1.5L4 6z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M8 6a4 4 0 118 0" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
           <span class="cart-count">0</span>
@@ -94,6 +89,10 @@
           <div class="form-field">
             <label for="checkoutAddress" data-i18n="cart.shippingAddress">Shipping Address</label>
             <textarea id="checkoutAddress" rows="3" required></textarea>
+          </div>
+          <div class="form-field">
+            <label for="checkoutNote" data-i18n="cart.orderNote">Order Note (optional)</label>
+            <textarea id="checkoutNote" rows="2"></textarea>
           </div>
           <button type="submit" class="btn btn-dark cart-place-order" data-i18n="cart.placeOrder">Place Order</button>
         </form>
@@ -201,7 +200,6 @@
   <script src="js/main.js"></script>
   <script src="js/store.js"></script>
   <script src="js/i18n.js"></script>
-  <script src="js/currency.js"></script>
   <script>renderCartPage();</script>
 </body>
 </html>

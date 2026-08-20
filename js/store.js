@@ -10,10 +10,6 @@ async function fetchJSON(url) {
   return res.json();
 }
 
-function priceText(usdAmount) {
-  return window.formatPrice ? window.formatPrice(usdAmount) : `$${Number(usdAmount).toFixed(2)}`;
-}
-
 function colorsToPlaceholder(colors) {
   if (!colors || colors.length === 0) return 'placeholder-gold';
   if (colors.length > 1) return 'placeholder-mixed';
@@ -37,6 +33,27 @@ function minSkuPrice(product) {
   return prices.length ? Math.min(...prices) : Number(product.price);
 }
 
+// Inline onload/onerror (rather than wiring listeners after insertion) keep
+// this working no matter how the returned HTML string gets injected — and
+// they still fire for cached images, so there's no stuck shimmer.
+const IMG_LOADING_ATTRS = `onload="this.classList.remove('img-loading')" onerror="this.classList.remove('img-loading')"`;
+
+// Elements that show a photo via CSS background-image (the PDP gallery, the
+// hero banner) have no native load event to hook into like <img> does, so we
+// preload off-DOM and only swap the real background in once it's ready —
+// the .img-loading shimmer covers the wait.
+function setBackgroundImageWhenLoaded(el, url, prefix = '', showShimmer = true) {
+  if (!el || !url) return;
+  if (showShimmer) el.classList.add('img-loading');
+  const preload = new Image();
+  preload.onload = () => {
+    el.style.backgroundImage = `${prefix}url('${url}')`;
+    el.classList.remove('img-loading');
+  };
+  preload.onerror = () => el.classList.remove('img-loading');
+  preload.src = url;
+}
+
 function renderProductImage(product) {
   const badgeClass = product.badge === 'sale' ? 'badge-sale' : 'badge-stock';
   const badgeHtml = product.badge ? `<span class="badge ${badgeClass}">${BADGE_LABELS[product.badge] || product.badge}</span>` : '';
@@ -44,20 +61,19 @@ function renderProductImage(product) {
 
   if (images[0]) {
     const altPhoto = images[1]
-      ? `<img class="product-image-alt-photo" src="${images[1]}" alt="">`
+      ? `<img class="product-image-alt-photo img-loading" src="${images[1]}" alt="" ${IMG_LOADING_ATTRS}>`
       : '';
-    return `<div class="product-image"><img class="product-image-photo" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}">${altPhoto}${badgeHtml}</div>`;
+    return `<div class="product-image"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}" ${IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
   }
   return `<div class="product-image ${colorsToPlaceholder(product.colors)}">${badgeHtml}</div>`;
 }
 
 function renderProductCard(product) {
-  const price = minSkuPrice(product);
   return `
     <div class="product-card" data-product-id="${product.id}">
       ${renderProductImage(product)}
       <p class="product-name">${escapeHtmlLocal(product.name)}</p>
-      <p class="product-price" data-price-usd="${price}">${priceText(price)}</p>
+      <p class="product-price">$${minSkuPrice(product).toFixed(2)}</p>
     </div>
   `;
 }
@@ -67,7 +83,6 @@ function renderListingProductCard(product) {
   const actionKey = soldOut ? 'listing.notifyMe' : 'listing.addToBag';
   const actionText = soldOut ? 'Notify Me' : '+ Add to Bag';
   const actionAttr = soldOut ? '' : `data-quick-add="${product.id}"`;
-  const price = minSkuPrice(product);
   const swatches = (product.colors || [])
     .map((c) => `<span class="swatch placeholder-${c === 'silver' ? 'silver' : 'gold'}"></span>`)
     .join('');
@@ -76,7 +91,7 @@ function renderListingProductCard(product) {
       ${renderProductImage(product)}
       <p class="product-action" data-i18n="${actionKey}" ${actionAttr}>${actionText}</p>
       <p class="product-name">${escapeHtmlLocal(product.name)}</p>
-      <p class="product-price" data-price-usd="${price}">${priceText(price)}</p>
+      <p class="product-price">$${minSkuPrice(product).toFixed(2)}</p>
       <div class="color-swatches">${swatches}</div>
     </div>
   `;
@@ -127,9 +142,13 @@ async function renderHomepage() {
   if (layout.hero.image) {
     const heroEl = document.getElementById('heroFull');
     const overlay = 'linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.05) 45%, rgba(0, 0, 0, 0.15) 100%)';
-    heroEl.style.backgroundImage = `${overlay}, url('${layout.hero.image}')`;
     heroEl.style.backgroundSize = 'cover';
     heroEl.style.backgroundPosition = 'center';
+    // Overlay shows immediately (no network needed for a gradient) so the
+    // section never looks blank; the photo itself fades in once loaded.
+    // No shimmer here — a beige shimmer would fight the white hero text.
+    heroEl.style.backgroundImage = overlay;
+    setBackgroundImageWhenLoaded(heroEl, layout.hero.image, `${overlay}, `, false);
   }
 
   const shopSection = document.getElementById('shopByCategorySection');
@@ -139,7 +158,7 @@ async function renderHomepage() {
     document.getElementById('shopByGrid').innerHTML = topLevelCategories.map((cat, i) => `
       <a href="new-in.html?category=${encodeURIComponent(cat.slug)}" class="shop-by-item">
         <div class="shop-by-image ${cat.image ? '' : placeholderCycle[i % placeholderCycle.length]}">
-          ${cat.image ? `<img class="shop-by-image-photo" src="${cat.image}" alt="${escapeHtmlLocal(cat.name)}">` : ''}
+          ${cat.image ? `<img class="shop-by-image-photo img-loading" src="${cat.image}" alt="${escapeHtmlLocal(cat.name)}" ${IMG_LOADING_ATTRS}>` : ''}
         </div>
         <p>${escapeHtmlLocal(cat.name)}</p>
       </a>
@@ -159,7 +178,6 @@ async function renderHomepage() {
 
   enhanceProductCards(container);
   if (window.reapplyI18n) window.reapplyI18n();
-  if (window.reapplyCurrency) window.reapplyCurrency();
 }
 
 // ---------- New In / category listing ----------
@@ -186,7 +204,9 @@ async function renderNewIn() {
     if (heading) { heading.removeAttribute('data-i18n'); heading.textContent = category ? category.name : 'Products'; }
     products = await fetchJSON(`/api/products?category=${encodeURIComponent(categorySlug)}`);
   } else {
-    products = await fetchJSON('/api/products?collection=new-in');
+    // No category/search filter — New In is just every product, newest first
+    // (the API already sorts by id desc, i.e. upload order).
+    products = await fetchJSON('/api/products');
   }
 
   // Tag filter — flat buttons for whichever badges actually appear in this
@@ -202,7 +222,6 @@ async function renderNewIn() {
       : '<p style="grid-column: 1 / -1; color: var(--color-text-muted);">No products found.</p>';
     enhanceProductCards(grid);
     if (window.reapplyI18n) window.reapplyI18n();
-    if (window.reapplyCurrency) window.reapplyCurrency();
   }
 
   if (tagFilterBar) {
@@ -226,6 +245,35 @@ async function renderNewIn() {
   renderGrid();
 }
 
+// ---------- Wishlist page ----------
+
+async function renderWishlistPage() {
+  const grid = document.getElementById('wishlistGrid');
+  const emptyState = document.getElementById('wishlistEmpty');
+  const ids = getWishlist();
+
+  if (!ids.length) {
+    grid.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  const allProducts = await fetchJSON('/api/products');
+  const products = ids.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
+
+  if (!products.length) {
+    grid.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+
+  grid.style.display = '';
+  emptyState.style.display = 'none';
+  grid.innerHTML = products.map(renderListingProductCard).join('');
+  enhanceProductCards(grid);
+  if (window.reapplyI18n) window.reapplyI18n();
+}
+
 // ---------- Product detail page ----------
 
 // "Frequently Bought Together" — admin-curated list of other products shown
@@ -243,10 +291,13 @@ function renderBundleSection(product, allProducts) {
 
   const items = [product, ...bundleProducts];
 
+  const bundleImageUrls = items.map((p) => (p.images && p.images[0]) || (p.skus && p.skus[0] && p.skus[0].image) || '');
   document.getElementById('pdpBundleImages').innerHTML = items.map((p, i) => {
-    const img = (p.images && p.images[0]) || (p.skus && p.skus[0] && p.skus[0].image) || '';
-    return `${i > 0 ? '<span class="pdp-bundle-plus">+</span>' : ''}<div class="pdp-bundle-image" style="${img ? `background-image:url('${img}')` : ''}"></div>`;
+    return `${i > 0 ? '<span class="pdp-bundle-plus">+</span>' : ''}<div class="pdp-bundle-image" data-bundle-image-index="${i}"></div>`;
   }).join('');
+  document.querySelectorAll('#pdpBundleImages [data-bundle-image-index]').forEach((el) => {
+    setBackgroundImageWhenLoaded(el, bundleImageUrls[Number(el.dataset.bundleImageIndex)]);
+  });
 
   document.getElementById('pdpBundleList').innerHTML = items.map((p, i) => {
     const skus = (p.skus && p.skus.length) ? p.skus : [{ id: null, color: '', price: p.price }];
@@ -257,28 +308,24 @@ function renderBundleSection(product, allProducts) {
         <input type="checkbox" data-bundle-check checked>
         <span class="pdp-bundle-item-name">${label}</span>
         ${showVariant ? `<select class="pdp-bundle-item-variant" data-bundle-variant>${skus.map((s) => `<option value="${s.id || ''}" data-price="${s.price}">${escapeHtmlLocal(s.color || 'Default')}</option>`).join('')}</select>` : ''}
-        <span class="pdp-bundle-item-price" data-bundle-price data-price-usd="${skus[0].price}">${priceText(skus[0].price)}</span>
+        <span class="pdp-bundle-item-price" data-bundle-price>$${Number(skus[0].price).toFixed(2)}</span>
       </div>
     `;
   }).join('');
 
   function recomputeBundleTotal() {
-    let totalUsd = 0;
+    let total = 0;
     document.querySelectorAll('#pdpBundleList .pdp-bundle-item').forEach((row) => {
       if (!row.querySelector('[data-bundle-check]').checked) return;
-      totalUsd += Number(row.querySelector('[data-bundle-price]').dataset.priceUsd) || 0;
+      total += Number(row.querySelector('[data-bundle-price]').textContent.replace('$', '')) || 0;
     });
-    const totalEl = document.getElementById('pdpBundleTotal');
-    totalEl.dataset.priceUsd = totalUsd;
-    totalEl.textContent = priceText(totalUsd);
+    document.getElementById('pdpBundleTotal').textContent = `$${total.toFixed(2)}`;
   }
 
   document.getElementById('pdpBundleList').addEventListener('change', (e) => {
     if (e.target.matches('[data-bundle-variant]')) {
       const price = Number(e.target.selectedOptions[0].dataset.price) || 0;
-      const priceEl = e.target.closest('.pdp-bundle-item').querySelector('[data-bundle-price]');
-      priceEl.dataset.priceUsd = price;
-      priceEl.textContent = priceText(price);
+      e.target.closest('.pdp-bundle-item').querySelector('[data-bundle-price]').textContent = `$${price.toFixed(2)}`;
     }
     recomputeBundleTotal();
   });
@@ -315,17 +362,36 @@ async function renderProductDetail() {
   const addBtn = document.querySelector('.pdp-add-btn');
   if (addBtn) addBtn.dataset.productId = product.id;
 
+  const wishlistBtn = document.querySelector('.pdp-wishlist');
+  if (wishlistBtn) {
+    wishlistBtn.dataset.productId = product.id;
+    wishlistBtn.classList.toggle('active', typeof isInWishlist === 'function' && isInWishlist(product.id));
+  }
+
   const breadcrumbCategory = document.getElementById('breadcrumbCategory');
   breadcrumbCategory.textContent = category ? category.name : product.categorySlug;
   breadcrumbCategory.href = category ? `new-in.html?category=${encodeURIComponent(category.slug)}` : '#';
   document.getElementById('breadcrumbName').textContent = product.name;
 
   document.getElementById('pdpTitle').textContent = product.name;
-  const pdpPriceEl = document.getElementById('pdpPriceValue');
-  pdpPriceEl.dataset.priceUsd = product.price;
-  pdpPriceEl.textContent = priceText(product.price);
-  document.getElementById('pdpInstallment').innerHTML =
-    `4 payments of <span data-price-usd="${product.price / 4}">${priceText(product.price / 4)}</span> at 0% interest with <strong>Klarna</strong>`;
+
+  const pdpMaterial = document.getElementById('pdpMaterial');
+  if (product.material) {
+    pdpMaterial.textContent = product.material;
+    pdpMaterial.style.display = '';
+  } else {
+    pdpMaterial.style.display = 'none';
+  }
+
+  document.getElementById('pdpPriceValue').textContent = `$${Number(product.price).toFixed(2)}`;
+
+  const pdpCode = document.getElementById('pdpCode');
+  if (product.code) {
+    pdpCode.textContent = `Item No. ${product.code}`;
+    pdpCode.style.display = '';
+  } else {
+    pdpCode.style.display = 'none';
+  }
 
   // Size variants — admin-defined per product; hide the selector entirely
   // when a product doesn't have any (most jewelry doesn't need one).
@@ -358,10 +424,13 @@ async function renderProductDetail() {
 
   if (images.length) {
     pdpMainImage.className = 'pdp-main-image';
-    pdpMainImage.style.backgroundImage = `url('${images[0]}')`;
+    setBackgroundImageWhenLoaded(pdpMainImage, images[0]);
     pdpThumbs.innerHTML = images
-      .map((url, i) => `<button class="pdp-thumb ${i === 0 ? 'active' : ''}" data-photo="${url}" style="background-image:url('${url}')"></button>`)
+      .map((url, i) => `<button class="pdp-thumb ${i === 0 ? 'active' : ''}" data-photo="${url}"></button>`)
       .join('');
+    pdpThumbs.querySelectorAll('.pdp-thumb').forEach((btn) => {
+      setBackgroundImageWhenLoaded(btn, btn.dataset.photo);
+    });
   } else {
     const placeholderClass = colorsToPlaceholder(product.colors);
     pdpMainImage.className = `pdp-main-image ${placeholderClass}`;
@@ -378,15 +447,11 @@ async function renderProductDetail() {
 
   function selectSku(sku) {
     document.getElementById('colorValue').textContent = sku.color[0].toUpperCase() + sku.color.slice(1);
-    const skuPriceEl = document.getElementById('pdpPriceValue');
-    skuPriceEl.dataset.priceUsd = sku.price;
-    skuPriceEl.textContent = priceText(sku.price);
-    document.getElementById('pdpInstallment').innerHTML =
-      `4 payments of <span data-price-usd="${sku.price / 4}">${priceText(sku.price / 4)}</span> at 0% interest with <strong>Klarna</strong>`;
+    document.getElementById('pdpPriceValue').textContent = `$${Number(sku.price).toFixed(2)}`;
     if (addBtn) addBtn.dataset.skuId = sku.id || '';
     if (sku.image) {
       pdpMainImage.className = 'pdp-main-image';
-      pdpMainImage.style.backgroundImage = `url('${sku.image}')`;
+      setBackgroundImageWhenLoaded(pdpMainImage, sku.image);
     }
     // Each qty-stepper click adds/removes one MOQ "batch" of this SKU, and the
     // quantity resets to the MOQ whenever the buyer switches variants.
@@ -452,13 +517,13 @@ async function renderCartPage() {
       const product = products.find((p) => p.id === item.productId);
       if (!product) return null;
       const sku = item.skuId ? (product.skus || []).find((s) => s.id === item.skuId) : null;
-      return { product, sku, skuId: item.skuId || null, quantity: item.quantity };
+      return { product, sku, skuId: item.skuId || null, size: item.size || null, quantity: item.quantity };
     })
     .filter(Boolean);
 
   function lineImageHtml(line) {
     const image = (line.sku && line.sku.image) || (line.product.images && line.product.images[0]);
-    if (image) return `<div class="cart-item-image"><img src="${image}" alt="${escapeHtmlLocal(line.product.name)}"></div>`;
+    if (image) return `<div class="cart-item-image"><img class="img-loading" src="${image}" alt="${escapeHtmlLocal(line.product.name)}" ${IMG_LOADING_ATTRS}></div>`;
     return `<div class="cart-item-image ${colorsToPlaceholder(line.product.colors)}"></div>`;
   }
 
@@ -469,12 +534,13 @@ async function renderCartPage() {
   function renderLines() {
     const itemsEl = document.getElementById('cartItems');
     itemsEl.innerHTML = lines.map((line) => `
-      <div class="cart-item" data-product-id="${line.product.id}" data-sku-id="${line.skuId || ''}">
+      <div class="cart-item" data-product-id="${line.product.id}" data-sku-id="${line.skuId || ''}" data-size="${escapeHtmlLocal(line.size || '')}">
         ${lineImageHtml(line)}
         <div>
           <p class="cart-item-name">${escapeHtmlLocal(line.product.name)}</p>
           ${line.sku ? `<p class="cart-item-color">${line.sku.color[0].toUpperCase() + line.sku.color.slice(1)}</p>` : ''}
-          <p class="cart-item-price"><span data-price-usd="${linePrice(line)}">${priceText(linePrice(line))}</span> each</p>
+          ${line.size ? `<p class="cart-item-color">${escapeHtmlLocal(line.size)}</p>` : ''}
+          <p class="cart-item-price">$${Number(linePrice(line)).toFixed(2)} each</p>
           <div class="cart-qty">
             <button type="button" data-qty-action="decrease" aria-label="Decrease quantity">&minus;</button>
             <span>${line.quantity}</span>
@@ -482,16 +548,14 @@ async function renderCartPage() {
           </div>
         </div>
         <div class="cart-item-right">
-          <p class="cart-item-line-total" data-price-usd="${linePrice(line) * line.quantity}">${priceText(linePrice(line) * line.quantity)}</p>
+          <p class="cart-item-line-total">$${(linePrice(line) * line.quantity).toFixed(2)}</p>
           <button type="button" class="cart-item-remove" data-remove>Remove</button>
         </div>
       </div>
     `).join('');
 
     const subtotal = lines.reduce((sum, line) => sum + linePrice(line) * line.quantity, 0);
-    const subtotalEl = document.getElementById('cartSubtotal');
-    subtotalEl.dataset.priceUsd = subtotal;
-    subtotalEl.textContent = priceText(subtotal);
+    document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
   }
 
   document.getElementById('cartItems').addEventListener('click', (e) => {
@@ -499,19 +563,20 @@ async function renderCartPage() {
     if (!row) return;
     const productId = Number(row.dataset.productId);
     const skuId = row.dataset.skuId || null;
-    const line = lines.find((l) => l.product.id === productId && l.skuId === skuId);
+    const size = row.dataset.size || null;
+    const line = lines.find((l) => l.product.id === productId && l.skuId === skuId && (l.size || null) === size);
 
     if (e.target.dataset.qtyAction === 'increase') {
       line.quantity += 1;
-      setCartQuantity(productId, skuId, line.quantity);
+      setCartQuantity(productId, skuId, line.quantity, size);
       renderLines();
     } else if (e.target.dataset.qtyAction === 'decrease') {
       line.quantity = Math.max(1, line.quantity - 1);
-      setCartQuantity(productId, skuId, line.quantity);
+      setCartQuantity(productId, skuId, line.quantity, size);
       renderLines();
     } else if (e.target.dataset.remove !== undefined) {
-      removeFromCart(productId, skuId);
-      const index = lines.findIndex((l) => l.product.id === productId && l.skuId === skuId);
+      removeFromCart(productId, skuId, size);
+      const index = lines.findIndex((l) => l.product.id === productId && l.skuId === skuId && (l.size || null) === size);
       lines.splice(index, 1);
       if (!lines.length) {
         emptyState.style.display = 'block';
@@ -532,12 +597,13 @@ async function renderCartPage() {
   document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const payload = {
-      items: lines.map((line) => ({ productId: line.product.id, skuId: line.skuId, quantity: line.quantity })),
+      items: lines.map((line) => ({ productId: line.product.id, skuId: line.skuId, size: line.size, quantity: line.quantity })),
       customer: {
         name: document.getElementById('checkoutName').value.trim(),
         email: document.getElementById('checkoutEmail').value.trim(),
         address: document.getElementById('checkoutAddress').value.trim(),
       },
+      note: document.getElementById('checkoutNote') ? document.getElementById('checkoutNote').value.trim() : '',
       customerId: loggedInCustomer ? loggedInCustomer.id : null,
     };
 
@@ -548,7 +614,7 @@ async function renderCartPage() {
       emptyState.style.display = 'none';
       document.getElementById('orderConfirmation').style.display = 'block';
       document.getElementById('orderConfirmationDetail').textContent =
-        `Order #${order.id} — ${priceText(order.total)} total. A confirmation has been sent to ${order.customer.email}.`;
+        `Order #${order.id} — $${order.total.toFixed(2)} total. A confirmation has been sent to ${order.customer.email}.`;
     } catch (err) {
       alert(err.message);
     }
@@ -638,12 +704,12 @@ function renderOrderHistoryCard(order) {
       <div class="order-history-items">
         ${order.items.map((item) => `
           <div class="order-history-item">
-            ${item.image ? `<img src="${item.image}">` : '<div class="thumb-placeholder"></div>'}
+            ${item.image ? `<img class="img-loading" src="${item.image}" ${IMG_LOADING_ATTRS}>` : '<div class="thumb-placeholder"></div>'}
             <span>${escapeHtmlLocal(item.name)}${item.color ? ` (${escapeHtmlLocal(item.color)})` : ''} &times; ${item.quantity}</span>
           </div>
         `).join('')}
       </div>
-      <div class="order-history-total" data-price-usd="${order.total}">${priceText(order.total)}</div>
+      <div class="order-history-total">$${Number(order.total).toFixed(2)}</div>
     </div>
   `;
 }
@@ -854,8 +920,7 @@ async function renderCartDrawerContents() {
   const cart = getCart();
   if (!cart.length) {
     container.innerHTML = '<p class="account-empty-note">Your bag is empty.</p>';
-    subtotalEl.dataset.priceUsd = 0;
-    subtotalEl.textContent = priceText(0);
+    subtotalEl.textContent = '$0.00';
     return;
   }
 
@@ -870,17 +935,17 @@ async function renderCartDrawerContents() {
     subtotal += price * item.quantity;
     return `
       <div class="cart-drawer-line">
-        ${image ? `<img src="${image}" alt="${escapeHtmlLocal(product.name)}">` : '<div class="thumb-placeholder"></div>'}
+        ${image ? `<img class="img-loading" src="${image}" alt="${escapeHtmlLocal(product.name)}" ${IMG_LOADING_ATTRS}>` : '<div class="thumb-placeholder"></div>'}
         <div>
           <p class="cart-drawer-line-name">${escapeHtmlLocal(product.name)}</p>
           ${sku ? `<p class="cart-drawer-line-color">${sku.color[0].toUpperCase() + sku.color.slice(1)}</p>` : ''}
-          <p class="cart-drawer-line-price">${item.quantity} &times; <span data-price-usd="${price}">${priceText(price)}</span></p>
+          ${item.size ? `<p class="cart-drawer-line-color">${escapeHtmlLocal(item.size)}</p>` : ''}
+          <p class="cart-drawer-line-price">${item.quantity} &times; $${price.toFixed(2)}</p>
         </div>
       </div>
     `;
   }).join('');
-  subtotalEl.dataset.priceUsd = subtotal;
-  subtotalEl.textContent = priceText(subtotal);
+  subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
 }
 
 initCartDrawer();

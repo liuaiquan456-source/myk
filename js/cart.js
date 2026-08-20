@@ -28,33 +28,35 @@ function saveCart(cart) {
   updateCartBadge();
 }
 
-// Cart lines are keyed by productId + skuId together, so different color
-// variants of the same product show up as separate lines in the cart.
-function sameLine(item, productId, skuId) {
-  return item.productId === productId && (item.skuId || null) === (skuId || null);
+// Cart lines are keyed by productId + skuId + size together, so different
+// variants (or sizes) of the same product show up as separate lines.
+function sameLine(item, productId, skuId, size) {
+  return item.productId === productId
+    && (item.skuId || null) === (skuId || null)
+    && (item.size || null) === (size || null);
 }
 
-function addToCart(productId, quantity = 1, skuId = null) {
+function addToCart(productId, quantity = 1, skuId = null, size = null) {
   const cart = getCart();
-  const existing = cart.find((item) => sameLine(item, productId, skuId));
+  const existing = cart.find((item) => sameLine(item, productId, skuId, size));
   if (existing) {
     existing.quantity += quantity;
   } else {
-    cart.push({ productId, skuId: skuId || null, quantity });
+    cart.push({ productId, skuId: skuId || null, size: size || null, quantity });
   }
   saveCart(cart);
 }
 
-function removeFromCart(productId, skuId = null) {
-  saveCart(getCart().filter((item) => !sameLine(item, productId, skuId)));
+function removeFromCart(productId, skuId = null, size = null) {
+  saveCart(getCart().filter((item) => !sameLine(item, productId, skuId, size)));
 }
 
-function setCartQuantity(productId, skuId, quantity) {
+function setCartQuantity(productId, skuId, quantity, size = null) {
   const cart = getCart();
-  const item = cart.find((i) => sameLine(i, productId, skuId));
+  const item = cart.find((i) => sameLine(i, productId, skuId, size));
   if (!item) return;
   if (quantity <= 0) {
-    saveCart(cart.filter((i) => !sameLine(i, productId, skuId)));
+    saveCart(cart.filter((i) => !sameLine(i, productId, skuId, size)));
   } else {
     item.quantity = quantity;
     saveCart(cart);
@@ -75,5 +77,51 @@ function updateCartBadge() {
     el.textContent = count;
   });
 }
+
+// Each signed-in buyer gets their own wishlist; signed-out visitors share a
+// "guest" one — same isolation pattern as the cart and browsing history.
+function wishlistStorageKey() {
+  const customer = getStoredCustomer();
+  return customer ? `myk_wishlist_${customer.id}` : 'myk_wishlist_guest';
+}
+
+function getWishlist() {
+  try {
+    return JSON.parse(localStorage.getItem(wishlistStorageKey())) || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveWishlist(ids) {
+  localStorage.setItem(wishlistStorageKey(), JSON.stringify(ids));
+  updateWishlistBadge();
+}
+
+function isInWishlist(productId) {
+  return getWishlist().includes(productId);
+}
+
+// Returns true if the product ended up in the wishlist, false if it was removed.
+function toggleWishlist(productId) {
+  const list = getWishlist();
+  const index = list.indexOf(productId);
+  if (index === -1) {
+    list.push(productId);
+  } else {
+    list.splice(index, 1);
+  }
+  saveWishlist(list);
+  return index === -1;
+}
+
+function updateWishlistBadge() {
+  const count = getWishlist().length;
+  document.querySelectorAll('.wishlist-count').forEach((el) => {
+    el.textContent = count;
+  });
+}
+
+updateWishlistBadge();
 
 updateCartBadge();
