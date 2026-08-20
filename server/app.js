@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const express = require('express');
 const multer = require('multer');
 const { load, save, slugify, uniqueSlug, hashPassword, verifyPassword } = require('./db');
@@ -10,6 +11,58 @@ const PORT = process.env.PORT || 3000;
 
 const app = express();
 app.use(express.json());
+
+// ---------- Admin auth ----------
+// In-memory session store — a single-process deploy doesn't need anything
+// heavier, and it matches this app's no-extra-dependencies footprint.
+const ADMIN_SESSION_COOKIE = 'myk_admin_session';
+const adminSessions = new Map();
+
+function parseCookies(req) {
+  const header = req.headers.cookie;
+  if (!header) return {};
+  return Object.fromEntries(
+    header.split(';').map((pair) => {
+      const idx = pair.indexOf('=');
+      return [pair.slice(0, idx).trim(), decodeURIComponent(pair.slice(idx + 1).trim())];
+    })
+  );
+}
+
+function getAdminSession(req) {
+  const token = parseCookies(req)[ADMIN_SESSION_COOKIE];
+  return token ? adminSessions.get(token) : undefined;
+}
+
+app.post('/api/admin/login', (req, res) => {
+  const db = load();
+  const { username, password } = req.body || {};
+  const admin = db.admin;
+  if (!admin || !username || !password || username !== admin.username || !verifyPassword(password, admin.password)) {
+    return res.status(401).json({ error: 'Invalid username or password' });
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+  adminSessions.set(token, { username: admin.username });
+  res.setHeader(
+    'Set-Cookie',
+    `${ADMIN_SESSION_COOKIE}=${token}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${60 * 60 * 24 * 7}`
+  );
+  res.json({ username: admin.username });
+});
+
+app.get('/api/admin/session', (req, res) => {
+  const session = getAdminSession(req);
+  if (!session) return res.status(401).json({ error: 'Not authenticated' });
+  res.json({ username: session.username });
+});
+
+app.post('/api/admin/logout', (req, res) => {
+  const token = parseCookies(req)[ADMIN_SESSION_COOKIE];
+  if (token) adminSessions.delete(token);
+  res.setHeader('Set-Cookie', `${ADMIN_SESSION_COOKIE}=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0`);
+  res.status(204).end();
+});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_DIR),
