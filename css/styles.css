@@ -62,6 +62,15 @@ img {
   background: var(--color-bg-alt);
 }
 
+.btn-outline {
+  background: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.btn-outline:hover {
+  border-color: var(--color-text);
+}
+
 .header-currency {
   display: inline-flex;
   align-items: center;
@@ -1567,6 +1576,8 @@ img.shop-by-image-photo,
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-muted);
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -1px;
@@ -1732,6 +1743,24 @@ img.shop-by-image-photo,
   line-height: 1;
   cursor: pointer;
   color: var(--color-text-muted);
+}
+
+/* The modal is just a Sign In / Create Account chooser — picking either
+   navigates to that page's own full form (see account.html / register.html). */
+.auth-modal-choice h2 {
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.auth-modal-choice-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 1.5rem;
+}
+
+.auth-modal-choice .btn + .btn {
+  margin-top: 0.75rem;
 }
 
 .password-input-wrapper {

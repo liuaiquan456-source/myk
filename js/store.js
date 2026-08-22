@@ -739,6 +739,10 @@ async function loadBrowsingHistory() {
   enhanceProductCards(container);
 }
 
+// Sign In (account.html) and Create Account (register.html) are separate
+// pages now, not tabs toggling forms in place — each page only has the one
+// form it needs, plus a plain link over to the other page.
+
 function renderAccountPage() {
   const authView = document.getElementById('authView');
   const accountView = document.getElementById('accountView');
@@ -767,16 +771,6 @@ function renderAccountPage() {
     return;
   }
 
-  document.querySelectorAll('.account-tab').forEach((tab) => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('.account-tab').forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-      const isLogin = tab.dataset.tab === 'login';
-      document.getElementById('loginForm').style.display = isLogin ? 'block' : 'none';
-      document.getElementById('registerForm').style.display = isLogin ? 'none' : 'block';
-    });
-  });
-
   document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const errorEl = document.getElementById('loginError');
@@ -792,6 +786,14 @@ function renderAccountPage() {
       errorEl.textContent = err.message;
     }
   });
+}
+
+function renderRegisterPage() {
+  // Already signed in — nothing to register, go straight to the account page.
+  if (getStoredCustomer()) {
+    window.location.href = 'account.html';
+    return;
+  }
 
   document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -807,14 +809,16 @@ function renderAccountPage() {
         address: document.getElementById('registerAddress').value.trim(),
       });
       localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(c));
-      showAccountView(c);
+      window.location.href = 'account.html';
     } catch (err) {
       errorEl.textContent = err.message;
     }
   });
 }
 
-// ---------- Account modal (index/new-in/product/cart pages) ----------
+// ---------- Account modal (index/new-in/product/cart/wishlist pages) ----------
+// Just a Sign In / Create Account chooser — each option is a link to that
+// page's own full form, not an embedded form switched via tabs.
 
 function initAccountModal() {
   const icon = document.getElementById('accountIcon');
@@ -832,51 +836,6 @@ function initAccountModal() {
   });
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) overlay.classList.remove('open');
-  });
-
-  document.querySelectorAll('[data-modal-tab]').forEach((tab) => {
-    tab.addEventListener('click', () => {
-      document.querySelectorAll('[data-modal-tab]').forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-      const isLogin = tab.dataset.modalTab === 'login';
-      document.getElementById('modalLoginForm').style.display = isLogin ? 'block' : 'none';
-      document.getElementById('modalRegisterForm').style.display = isLogin ? 'none' : 'block';
-    });
-  });
-
-  document.getElementById('modalLoginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const errorEl = document.getElementById('modalLoginError');
-    errorEl.textContent = '';
-    try {
-      const c = await fetchJSONWithBody('/api/customers/login', {
-        email: document.getElementById('modalLoginEmail').value.trim(),
-        password: document.getElementById('modalLoginPassword').value,
-      });
-      localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(c));
-      window.location.href = 'account.html';
-    } catch (err) {
-      errorEl.textContent = err.message;
-    }
-  });
-
-  document.getElementById('modalRegisterForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const errorEl = document.getElementById('modalRegisterError');
-    errorEl.textContent = '';
-    try {
-      const c = await fetchJSONWithBody('/api/customers/register', {
-        name: document.getElementById('modalRegisterName').value.trim(),
-        email: document.getElementById('modalRegisterEmail').value.trim(),
-        password: document.getElementById('modalRegisterPassword').value,
-        country: document.getElementById('modalRegisterCountry').value.trim(),
-        buyerManager: document.getElementById('modalRegisterBuyerManager').value.trim(),
-      });
-      localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(c));
-      window.location.href = 'account.html';
-    } catch (err) {
-      errorEl.textContent = err.message;
-    }
   });
 }
 
