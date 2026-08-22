@@ -160,7 +160,12 @@ img {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--color-bg);
+  /* 30% opaque + blur: sticky header reads as plain background at the very
+     top of the page (nothing behind it yet), then turns into frosted glass
+     over whatever scrolls underneath once the page moves. */
+  background: rgba(250, 248, 245, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--color-border);
 }
 
