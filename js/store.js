@@ -168,10 +168,21 @@ async function renderHomepage() {
   }
 
   // Each block's products are hand-picked by the admin (block.productIds), in
-  // the order they chose — no more auto-population from a collection tag.
+  // the order they chose. A block the admin hasn't curated yet (no
+  // productIds) falls back to the newest arrivals — allProducts is already
+  // newest-first from the API — rather than rendering empty. The fallback
+  // cursor advances across blocks so two uncurated blocks in a row show
+  // different products instead of repeating the same newest 8.
   const container = document.getElementById('categoryBlocksContainer');
+  const NEWEST_FALLBACK_COUNT = 8;
+  let newestFallbackCursor = 0;
   const blockSections = layout.blocks.map((block) => {
-    const products = (block.productIds || []).map((id) => productsById.get(id)).filter(Boolean);
+    const picked = (block.productIds || []).map((id) => productsById.get(id)).filter(Boolean);
+    let products = picked;
+    if (!products.length) {
+      products = allProducts.slice(newestFallbackCursor, newestFallbackCursor + NEWEST_FALLBACK_COUNT);
+      newestFallbackCursor += NEWEST_FALLBACK_COUNT;
+    }
     return renderCategoryBlockSection(block, products);
   });
   container.innerHTML = blockSections.join('');
