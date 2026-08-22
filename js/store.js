@@ -827,6 +827,65 @@ function renderRegisterPage() {
   });
 }
 
+// ---------- Custom inquiry page ----------
+
+function initCustomInquiryPage() {
+  const form = document.getElementById('inquiryForm');
+  if (!form) return;
+
+  const imageInput = document.getElementById('inquiryImageInput');
+  const preview = document.getElementById('inquiryImagePreview');
+  const errorEl = document.getElementById('inquiryError');
+  const successEl = document.getElementById('inquirySuccess');
+  const submitBtn = document.getElementById('inquirySubmitBtn');
+  let uploadedImageUrl = null;
+
+  imageInput.addEventListener('change', async () => {
+    const file = imageInput.files[0];
+    if (!file) return;
+    errorEl.textContent = '';
+    uploadedImageUrl = null;
+    preview.innerHTML = '<p>Uploading&hellip;</p>';
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Upload failed');
+      const data = await res.json();
+      uploadedImageUrl = data.url;
+      preview.innerHTML = `<img src="${uploadedImageUrl}" alt="">`;
+    } catch (err) {
+      preview.innerHTML = '';
+      errorEl.textContent = err.message;
+    }
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errorEl.textContent = '';
+    successEl.style.display = 'none';
+    submitBtn.disabled = true;
+    try {
+      await fetchJSONWithBody('/api/inquiries', {
+        name: document.getElementById('inquiryName').value.trim(),
+        country: document.getElementById('inquiryCountry').value.trim(),
+        city: document.getElementById('inquiryCity').value.trim(),
+        contact: document.getElementById('inquiryContact').value.trim(),
+        image: uploadedImageUrl,
+      });
+      form.reset();
+      preview.innerHTML = '';
+      uploadedImageUrl = null;
+      successEl.textContent = "Thanks! Your inquiry has been submitted — we'll be in touch soon.";
+      successEl.style.display = 'block';
+    } catch (err) {
+      errorEl.textContent = err.message;
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+}
+
 // ---------- Account modal (index/new-in/product/cart/wishlist pages) ----------
 // Just a Sign In / Create Account chooser — each option is a link to that
 // page's own full form, not an embedded form switched via tabs.

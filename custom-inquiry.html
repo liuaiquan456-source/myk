@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MYK | Fine Jewelry</title>
+<title>Custom Inquiry | MYK</title>
 <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -19,7 +19,7 @@
         <a href="index.html" class="logo">MYK</a>
 
         <nav class="main-nav" id="mainNav">
-          <a href="#" data-i18n="nav.bestsellers">Bestsellers</a>
+          <a href="index.html" data-i18n="nav.bestsellers">Bestsellers</a>
           <a href="new-in.html" data-i18n="nav.newIn">New In</a>
           <span id="navCategoryLinks"></span>
           <a href="#" data-i18n="nav.aboutUs">About Us</a>
@@ -59,37 +59,37 @@
     </div>
   </header>
 
-  <!-- Hero -->
-  <section class="hero-full" id="heroFull">
-    <div class="hero-full-content">
-      <p class="hero-eyebrow" id="heroEyebrow"></p>
-      <h1 id="heroHeading"></h1>
-      <div class="hero-actions">
-        <a href="#shopByCategorySection" class="btn btn-light" id="heroButton"></a>
-        <a href="custom-inquiry.html" class="btn btn-outline-light" data-i18n="hero.customInquiry">Custom Inquiry</a>
-      </div>
-    </div>
-  </section>
+  <section class="account-page">
+    <div class="account-auth inquiry-form-wrap">
+      <h1 class="inquiry-title">Custom Inquiry</h1>
+      <p class="inquiry-subtitle">Tell us about the piece you're looking for and we'll follow up with a custom quote.</p>
 
-  <!-- Shop by category -->
-  <section class="shop-by-category" id="shopByCategorySection">
-    <div class="shop-by-grid" id="shopByGrid"></div>
-  </section>
-
-  <!-- Category showcase -->
-  <div id="categoryBlocksContainer"></div>
-
-  <!-- Instagram / UGC -->
-  <section class="ugc-section">
-    <h2>#MYKJewelry Share Your Look</h2>
-    <p>Follow us and tag your photos for a chance to be featured</p>
-    <div class="ugc-grid">
-      <div class="ugc-item placeholder-mixed"></div>
-      <div class="ugc-item placeholder-gold"></div>
-      <div class="ugc-item placeholder-silver"></div>
-      <div class="ugc-item placeholder-mixed"></div>
-      <div class="ugc-item placeholder-gold"></div>
-      <div class="ugc-item placeholder-silver"></div>
+      <form id="inquiryForm" class="account-form">
+        <div class="form-field">
+          <label for="inquiryName">Recipient Name</label>
+          <input type="text" id="inquiryName" required>
+        </div>
+        <div class="form-field">
+          <label for="inquiryCountry">Recipient Country</label>
+          <input type="text" id="inquiryCountry" required>
+        </div>
+        <div class="form-field">
+          <label for="inquiryCity">Recipient City</label>
+          <input type="text" id="inquiryCity" required>
+        </div>
+        <div class="form-field">
+          <label for="inquiryContact">Recipient Contact <span style="font-weight:400; color:var(--color-text-muted);">(email, phone, or WhatsApp)</span></label>
+          <input type="text" id="inquiryContact" required>
+        </div>
+        <div class="form-field">
+          <label for="inquiryImageInput">Product Image <span style="font-weight:400; color:var(--color-text-muted);">(upload a photo, or take one)</span></label>
+          <input type="file" id="inquiryImageInput" accept="image/*" capture="environment">
+          <div class="inquiry-image-preview" id="inquiryImagePreview"></div>
+        </div>
+        <p class="account-error" id="inquiryError"></p>
+        <p class="account-success" id="inquirySuccess" style="display:none;"></p>
+        <button type="submit" class="btn btn-dark" style="width:100%;" id="inquirySubmitBtn">Submit Inquiry</button>
+      </form>
     </div>
   </section>
 
@@ -143,7 +143,6 @@
     </div>
   </div>
 
-  <!-- Cart drawer -->
   <!-- Orders drawer -->
   <div class="cart-drawer-overlay" id="ordersDrawerOverlay"></div>
   <aside class="cart-drawer" id="ordersDrawer">
@@ -154,6 +153,7 @@
     <div class="cart-drawer-items order-history-list" id="ordersDrawerItems"></div>
   </aside>
 
+  <!-- Cart drawer -->
   <div class="cart-drawer-overlay" id="cartDrawerOverlay"></div>
   <aside class="cart-drawer" id="cartDrawer">
     <div class="cart-drawer-header">
@@ -174,6 +174,6 @@
   <script src="js/main.js"></script>
   <script src="js/store.js"></script>
   <script src="js/i18n.js"></script>
-  <script>renderHomepage();</script>
+  <script>initCustomInquiryPage();</script>
 </body>
 </html>

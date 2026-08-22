@@ -412,6 +412,60 @@ app.delete('/api/orders/:id', (req, res) => {
   res.status(204).end();
 });
 
+// ---------- Custom inquiries ----------
+// Submitted from the storefront's "Custom Inquiry" page — the reference
+// photo is uploaded separately via /api/upload first, same as everywhere
+// else images are handled, and its returned URL is passed in here.
+
+app.get('/api/inquiries', (req, res) => {
+  const db = load();
+  const inquiries = [...db.inquiries].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  res.json(inquiries);
+});
+
+app.post('/api/inquiries', (req, res) => {
+  const db = load();
+  const { name, country, city, contact, image } = req.body;
+  if (!name || !country || !city || !contact) {
+    return res.status(400).json({ error: 'Name, country, city and contact are required' });
+  }
+
+  const inquiry = {
+    id: db.nextInquiryId++,
+    name: name.trim(),
+    country: country.trim(),
+    city: city.trim(),
+    contact: contact.trim(),
+    image: image || null,
+    status: 'new',
+    createdAt: new Date().toISOString(),
+  };
+  db.inquiries.push(inquiry);
+  save(db);
+  res.status(201).json(inquiry);
+});
+
+app.put('/api/inquiries/:id', (req, res) => {
+  const db = load();
+  const inquiry = db.inquiries.find((i) => i.id === Number(req.params.id));
+  if (!inquiry) return res.status(404).json({ error: 'Inquiry not found' });
+
+  if (req.body.status) inquiry.status = req.body.status;
+  save(db);
+  res.json(inquiry);
+});
+
+app.delete('/api/inquiries/:id', (req, res) => {
+  const db = load();
+  const id = Number(req.params.id);
+  const exists = db.inquiries.some((i) => i.id === id);
+  if (!exists) return res.status(404).json({ error: 'Inquiry not found' });
+
+  db.inquiries = db.inquiries.filter((i) => i.id !== id);
+  save(db);
+  res.status(204).end();
+});
+
 // ---------- Distributors ----------
 
 app.get('/api/distributors', (req, res) => {

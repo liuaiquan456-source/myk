@@ -31,6 +31,11 @@ function load() {
     db.currencies = DEFAULT_CURRENCIES;
     save(db);
   }
+  if (!db.inquiries) {
+    db.inquiries = [];
+    db.nextInquiryId = 1;
+    save(db);
+  }
 
   return db;
 }

@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>买家订单详情 | MYK 管理后台</title>
+<title>定制询单 | MYK 管理后台</title>
 <link rel="stylesheet" href="css/admin.css">
 </head>
-<body data-page="orders">
+<body data-page="inquiries">
   <div class="admin-shell">
     <aside class="admin-sidebar">
       <div class="admin-logo">MYK</div>
@@ -16,8 +16,8 @@
         <a href="layout.html">页面布局</a>
         <a href="products.html">商品管理</a>
         <a href="categories.html">分类管理</a>
-        <a href="orders.html" class="active">订单管理</a>
-        <a href="inquiries.html">定制询单</a>
+        <a href="orders.html">订单管理</a>
+        <a href="inquiries.html" class="active">定制询单</a>
         <a href="languages.html">语言管理</a>
         <a href="customers.html">客户管理</a>
         <div class="view-site">
@@ -30,15 +30,27 @@
     <main class="admin-main">
       <div class="admin-header">
         <div>
-          <a href="orders.html" style="font-size:0.85rem; color:var(--color-text-muted);">&larr; 返回买家列表</a>
-          <h1>买家订单详情</h1>
-          <p>每个商品单独一行，可直接修改数量、单价（仅修正本订单）和该变体的库存，改完点"确认"保存。</p>
+          <h1>定制询单</h1>
+          <p>客户通过前台"Custom Inquiry"页面提交的定制需求</p>
         </div>
       </div>
 
       <div class="panel">
-        <div id="orderGroups"></div>
-        <div class="empty-state" id="orderEmpty" style="display:none;">找不到该买家的订单。</div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>图片</th>
+              <th>收件人</th>
+              <th>国家 / 城市</th>
+              <th>联系方式</th>
+              <th>状态</th>
+              <th>提交时间</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="inquiryRows"></tbody>
+        </table>
+        <div class="empty-state" id="inquiryEmpty" style="display:none;">暂无询单。</div>
       </div>
     </main>
   </div>
@@ -50,6 +62,6 @@
   </div>
 
   <script src="js/admin.js"></script>
-  <script src="js/order-detail.js"></script>
+  <script src="js/inquiries.js"></script>
 </body>
 </html>

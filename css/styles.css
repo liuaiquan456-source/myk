@@ -71,6 +71,18 @@ img {
   border-color: var(--color-text);
 }
 
+/* Ghost button for dark photo backgrounds (e.g. the hero banner) — a solid
+   .btn-outline's dark text/border would disappear against the photo. */
+.btn-outline-light {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+}
+.btn-outline-light:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+}
+
 .header-currency {
   display: inline-flex;
   align-items: center;
@@ -365,6 +377,12 @@ img {
   margin-bottom: 1.5rem;
 }
 
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
 @media (min-width: 901px) {
   .hero-full {
     align-items: center;
@@ -374,6 +392,10 @@ img {
 
   .hero-full-content {
     margin: 0 auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
   }
 }
 
@@ -1596,6 +1618,45 @@ img.shop-by-image-photo,
   font-size: 0.82rem;
   margin: -0.4rem 0 0.8rem;
   min-height: 1em;
+}
+
+.account-success {
+  color: #2f6b44;
+  font-size: 0.85rem;
+  margin: -0.4rem 0 0.8rem;
+}
+
+.inquiry-form-wrap {
+  max-width: 480px;
+}
+
+.inquiry-title {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.inquiry-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 2rem;
+}
+
+.inquiry-image-preview {
+  margin-top: 0.6rem;
+}
+
+.inquiry-image-preview img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+}
+
+.inquiry-image-preview p {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
 }
 
 .account-profile h1 {
