@@ -1,5 +1,32 @@
+// Every admin page except login.html loads this script, so the session
+// check here is what actually gates access to the panel.
+(async () => {
+  const res = await fetch('/api/admin/session');
+  if (!res.ok) {
+    const next = encodeURIComponent(location.pathname.split('/').pop());
+    window.location.href = `login.html?next=${next}`;
+    return;
+  }
+  const { username } = await res.json();
+  document.querySelectorAll('[data-admin-username]').forEach((el) => (el.textContent = username));
+})();
+
+async function adminLogout() {
+  await fetch('/api/admin/logout', { method: 'POST' });
+  window.location.href = 'login.html';
+}
+
 async function api(url, options = {}) {
   const res = await fetch(url, options);
+  if (res.status === 401) {
+    // The session check at the top of this file redirects too, but it races
+    // with each page's own data-loading calls — this is the fallback so a
+    // 401 here always ends in a clean redirect instead of a thrown error
+    // that breaks whatever screen was mid-render.
+    const next = encodeURIComponent(location.pathname.split('/').pop());
+    window.location.href = `login.html?next=${next}`;
+    return new Promise(() => {});
+  }
   if (!res.ok) {
     let message = `请求失败（${res.status}）`;
     try {

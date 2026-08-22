@@ -5,29 +5,25 @@ const productModalTitle = document.getElementById('productModalTitle');
 const productForm = document.getElementById('productForm');
 const productIdField = document.getElementById('productId');
 const productNameField = document.getElementById('productName');
+const productMaterialField = document.getElementById('productMaterial');
 const productPriceField = document.getElementById('productPrice');
+const productCodeField = document.getElementById('productCode');
 const productCategoryField = document.getElementById('productCategory');
 const productBadgeField = document.getElementById('productBadge');
-const productSizesField = document.getElementById('productSizes');
 const productDescriptionField = document.getElementById('productDescription');
 const productImageInput = document.getElementById('productImageInput');
 const productImageGallery = document.getElementById('productImageGallery');
 const categoryFilterField = document.getElementById('categoryFilter');
 const skuListEl = document.getElementById('skuList');
+const sizeListEl = document.getElementById('sizeList');
 
 const BADGE_LABELS = { sale: '促销', 'low-stock': '库存紧张', 'sold-out': '售罄' };
-const COLLECTION_LABELS = {
-  'gold-collection': '金色系列',
-  'new-drops': '新品上架',
-  'silver-collection': '银色系列',
-  trending: '热门推荐',
-  'new-in': 'New In',
-};
 
 let products = [];
 let categories = [];
 let currentImages = [];
 let currentSkus = [];
+let currentSizes = [];
 let currentBundleIds = [];
 let dragFromIndex = null;
 let skuImageTargetIndex = null;
@@ -37,7 +33,24 @@ async function loadData() {
   [products, categories] = await Promise.all([api('/api/products'), api('/api/categories')]);
   populateCategorySelect();
   populateCategoryFilter();
+  populateBadgeSuggestions();
+  populateMaterialSuggestions();
   renderProducts();
+}
+
+// Tags are free text now — suggest whatever's already been used on other
+// products instead of forcing a fixed list.
+function populateBadgeSuggestions() {
+  const badges = [...new Set(products.map((p) => p.badge).filter(Boolean))].sort();
+  document.getElementById('badgeSuggestions').innerHTML =
+    badges.map((b) => `<option value="${escapeHtml(b)}">`).join('');
+}
+
+// Materials are free text too — suggest whatever's already been used.
+function populateMaterialSuggestions() {
+  const materials = [...new Set(products.map((p) => p.material).filter(Boolean))].sort();
+  document.getElementById('materialSuggestions').innerHTML =
+    materials.map((m) => `<option value="${escapeHtml(m)}">`).join('');
 }
 
 // Categories can now nest to any depth — walk the tree depth-first so
@@ -285,6 +298,44 @@ skuListEl.addEventListener('click', (e) => {
   }
 });
 
+// ---------- Size variants (simple text list, unlike SKUs no price/stock) ----------
+
+function renderSizeRows() {
+  if (!currentSizes.length) {
+    sizeListEl.innerHTML = '<p style="color:var(--color-text-muted); font-size:0.82rem; margin-bottom:0.6rem;">还没有尺寸，点击下方按钮添加（例如 18cm / 7.08"）。</p>';
+    return;
+  }
+  sizeListEl.innerHTML = currentSizes.map((size, index) => `
+    <div class="sku-row" data-index="${index}">
+      <div class="sku-row-fields">
+        <div class="sku-field">
+          <label>尺寸内容</label>
+          <input type="text" data-size-index="${index}" value="${escapeHtml(size)}" placeholder="如 18cm / 7.08&quot;">
+        </div>
+      </div>
+      <button type="button" class="btn btn-sm btn-danger" data-remove-size="${index}">删除</button>
+    </div>
+  `).join('');
+}
+
+document.getElementById('addSizeBtn').addEventListener('click', () => {
+  currentSizes.push('');
+  renderSizeRows();
+});
+
+sizeListEl.addEventListener('input', (e) => {
+  const index = Number(e.target.dataset.sizeIndex);
+  if (Number.isNaN(index)) return;
+  currentSizes[index] = e.target.value;
+});
+
+sizeListEl.addEventListener('click', (e) => {
+  const removeIndex = e.target.dataset.removeSize;
+  if (removeIndex === undefined) return;
+  currentSizes.splice(Number(removeIndex), 1);
+  renderSizeRows();
+});
+
 // ---------- SKU image picker (choose from the product's uploaded gallery, or upload new) ----------
 
 const skuImagePickerModal = document.getElementById('skuImagePickerModal');
@@ -343,26 +394,24 @@ function openProductModal(product) {
   productForm.reset();
   currentImages = [];
   currentSkus = [];
+  currentSizes = [];
   currentBundleIds = [];
-  document.querySelectorAll('.productCollection').forEach((cb) => (cb.checked = false));
 
   if (product) {
     productModalTitle.textContent = '编辑商品';
     productIdField.value = product.id;
     productNameField.value = product.name;
+    productMaterialField.value = product.material || '';
     productPriceField.value = minSkuPrice(product);
+    productCodeField.value = product.code || '';
     productCategoryField.value = product.categorySlug;
-    productBadgeField.value = product.badge || 'none';
-    productSizesField.value = (product.sizes || []).join(', ');
+    productBadgeField.value = product.badge || '';
     productDescriptionField.value = product.description || '';
-    (product.collections || []).forEach((collection) => {
-      const cb = document.querySelector(`.productCollection[value="${collection}"]`);
-      if (cb) cb.checked = true;
-    });
     currentImages = [...(product.images || [])];
     currentSkus = product.skus && product.skus.length
       ? product.skus.map((s) => ({ ...s }))
       : (product.colors || []).map((color) => ({ id: null, color, price: product.price, stock: 0, moq: 1, image: null }));
+    currentSizes = [...(product.sizes || [])];
     currentBundleIds = [...(product.bundleProductIds || [])];
   } else {
     productModalTitle.textContent = '添加商品';
@@ -370,6 +419,7 @@ function openProductModal(product) {
   }
   renderImageGallery();
   renderSkuRows();
+  renderSizeRows();
   renderBundleProductList();
   productModal.classList.add('open');
 }
@@ -380,6 +430,7 @@ function closeProductModal() {
 
 document.getElementById('addProductBtn').addEventListener('click', () => openProductModal(null));
 document.getElementById('productCancelBtn').addEventListener('click', closeProductModal);
+document.getElementById('productCancelBtnTop').addEventListener('click', closeProductModal);
 document.getElementById('productModalClose').addEventListener('click', closeProductModal);
 
 productRows.addEventListener('click', async (e) => {
@@ -411,17 +462,16 @@ productRows.addEventListener('click', async (e) => {
 productForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const collections = [...document.querySelectorAll('.productCollection:checked')].map((cb) => cb.value);
-
   const payload = {
     name: productNameField.value.trim(),
+    material: productMaterialField.value.trim(),
     price: Number(productPriceField.value),
+    code: productCodeField.value.trim(),
     categorySlug: productCategoryField.value,
-    badge: productBadgeField.value,
-    collections,
+    badge: productBadgeField.value.trim(),
     images: currentImages,
     skus: currentSkus,
-    sizes: productSizesField.value,
+    sizes: currentSizes,
     description: productDescriptionField.value.trim(),
     bundleProductIds: currentBundleIds,
   };

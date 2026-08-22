@@ -81,17 +81,20 @@ function currentFilteredOrders() {
   });
 }
 
-function renderBuyers() {
-  const groups = groupOrdersByBuyer(currentFilteredOrders());
-  buyerEmpty.style.display = groups.length ? 'none' : 'block';
+let currentGroups = [];
 
-  buyerRows.innerHTML = groups.map((group) => {
+function renderBuyers() {
+  currentGroups = groupOrdersByBuyer(currentFilteredOrders());
+  buyerEmpty.style.display = currentGroups.length ? 'none' : 'block';
+
+  buyerRows.innerHTML = currentGroups.map((group) => {
     const orderCount = group.orders.length;
     const total = group.orders.reduce((sum, o) => sum + o.total, 0);
     const distributor = group.customerId ? (customersById.get(group.customerId)?.buyerManager || null) : null;
     const hasUnviewed = group.orders.some((o) => !o.viewed);
     return `
       <tr>
+        <td><input type="checkbox" class="buyer-select" data-buyer-key="${escapeHtml(group.key)}"></td>
         <td class="row-actions"><a class="btn btn-sm btn-outline" href="order-detail.html?buyer=${encodeURIComponent(group.key)}">查看详情</a></td>
         <td>${escapeHtml(group.name)} <span class="buyer-badge ${group.customerId ? '' : 'guest'}">${group.customerId ? '注册买家' : '访客'}</span> ${hasUnviewed ? '<span class="tag-pill tag-pill-new">NEW</span>' : ''}</td>
         <td>${escapeHtml(group.email)}</td>
@@ -102,9 +105,70 @@ function renderBuyers() {
       </tr>
     `;
   }).join('');
+
+  document.getElementById('selectAllBuyers').checked = false;
+  updateBulkActionBar();
 }
 
 distributorFilterField.addEventListener('change', renderBuyers);
+
+// ---------- Bulk selection / actions ----------
+
+function selectedOrderIds() {
+  const keys = [...document.querySelectorAll('.buyer-select:checked')].map((cb) => cb.dataset.buyerKey);
+  const ids = [];
+  keys.forEach((key) => {
+    const group = currentGroups.find((g) => g.key === key);
+    if (group) group.orders.forEach((o) => ids.push(o.id));
+  });
+  return ids;
+}
+
+function updateBulkActionBar() {
+  const checked = document.querySelectorAll('.buyer-select:checked').length;
+  const bar = document.getElementById('bulkActionBar');
+  bar.style.display = checked ? 'flex' : 'none';
+  document.getElementById('bulkSelectedCount').textContent = `已选择 ${checked} 位买家（共 ${selectedOrderIds().length} 笔订单）`;
+}
+
+document.getElementById('selectAllBuyers').addEventListener('change', (e) => {
+  document.querySelectorAll('.buyer-select').forEach((cb) => (cb.checked = e.target.checked));
+  updateBulkActionBar();
+});
+
+buyerRows.addEventListener('change', (e) => {
+  if (e.target.classList.contains('buyer-select')) updateBulkActionBar();
+});
+
+document.getElementById('bulkDeleteBtn').addEventListener('click', async () => {
+  const ids = selectedOrderIds();
+  if (!ids.length) return;
+  if (!confirm(`确定要删除选中的 ${ids.length} 笔订单吗？此操作不可撤销。`)) return;
+  try {
+    await Promise.all(ids.map((id) => api(`/api/orders/${id}`, { method: 'DELETE' })));
+    showToast(`已删除 ${ids.length} 笔订单`);
+    loadOrders();
+  } catch (err) {
+    showToast(err.message);
+  }
+});
+
+document.getElementById('bulkSetStatusBtn').addEventListener('click', async () => {
+  const ids = selectedOrderIds();
+  if (!ids.length) return;
+  const status = document.getElementById('bulkStatusSelect').value;
+  try {
+    await Promise.all(ids.map((id) => api(`/api/orders/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status }),
+    })));
+    showToast(`已更新 ${ids.length} 笔订单的状态`);
+    loadOrders();
+  } catch (err) {
+    showToast(err.message);
+  }
+});
 
 // ---------- CSV export ----------
 

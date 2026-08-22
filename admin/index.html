@@ -18,11 +18,11 @@
         <a href="categories.html">分类管理</a>
         <a href="orders.html">订单管理</a>
         <a href="languages.html">语言管理</a>
-        <a href="currencies.html">货币管理</a>
         <a href="customers.html">客户管理</a>
         <div class="view-site">
           <a href="../index.html" target="_blank">查看前台 &rarr;</a>
         </div>
+        <button type="button" class="btn btn-outline btn-sm" style="margin-top:0.6rem; width:100%;" onclick="adminLogout()">退出登录</button>
       </nav>
     </aside>
 
@@ -59,6 +59,14 @@
             <a class="btn btn-sm" href="orders.html">查看订单</a>
           </div>
         </div>
+        <div class="panel">
+          <h2>账号设置</h2>
+          <p style="color:var(--color-text-muted); font-size:0.85rem;">当前登录账号：<strong data-admin-username>&mdash;</strong></p>
+          <p style="color:var(--color-text-muted); font-size:0.85rem;">修改后台登录的账号和密码。</p>
+          <div class="form-actions">
+            <button type="button" class="btn btn-sm" id="openCredentialsBtn">修改账号密码</button>
+          </div>
+        </div>
         <div class="panel full" style="grid-column: 1 / -1;">
           <h2>首页布局</h2>
           <p style="color:var(--color-text-muted); font-size:0.85rem;">编辑首页横幅内容，并管理各板块展示的商品系列。</p>
@@ -68,6 +76,32 @@
         </div>
       </div>
     </main>
+  </div>
+
+  <!-- Change credentials modal -->
+  <div class="modal-overlay" id="credentialsModal">
+    <div class="modal">
+      <h2>修改账号密码</h2>
+      <form id="credentialsForm">
+        <div class="form-field">
+          <label>当前密码 <span style="font-weight:400; color:var(--color-text-muted);">（用于验证身份，必填）</span></label>
+          <input type="password" id="currentPassword" required>
+        </div>
+        <div class="form-field">
+          <label>新账号 <span style="font-weight:400; color:var(--color-text-muted);">（选填，留空则不修改）</span></label>
+          <input type="text" id="newUsername">
+        </div>
+        <div class="form-field">
+          <label>新密码 <span style="font-weight:400; color:var(--color-text-muted);">（选填，留空则不修改，至少 6 位）</span></label>
+          <input type="password" id="newPassword">
+        </div>
+        <p id="credentialsError" style="color:var(--color-danger); font-size:0.85rem; min-height:1.2em;"></p>
+        <div class="form-actions">
+          <button type="submit" class="btn">保存</button>
+          <button type="button" class="btn btn-outline" id="credentialsCancelBtn">取消</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="js/admin.js"></script>
@@ -82,6 +116,40 @@
       document.getElementById('statCategories').textContent = categories.length;
       document.getElementById('statOrders').textContent = orders.length;
     })();
+
+    const credentialsModal = document.getElementById('credentialsModal');
+    const credentialsForm = document.getElementById('credentialsForm');
+
+    document.getElementById('openCredentialsBtn').addEventListener('click', () => {
+      credentialsForm.reset();
+      document.getElementById('credentialsError').textContent = '';
+      credentialsModal.classList.add('open');
+    });
+    document.getElementById('credentialsCancelBtn').addEventListener('click', () => {
+      credentialsModal.classList.remove('open');
+    });
+
+    credentialsForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorEl = document.getElementById('credentialsError');
+      errorEl.textContent = '';
+      try {
+        const { username } = await api('/api/admin/credentials', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentPassword: document.getElementById('currentPassword').value,
+            newUsername: document.getElementById('newUsername').value.trim(),
+            newPassword: document.getElementById('newPassword').value,
+          }),
+        });
+        document.querySelectorAll('[data-admin-username]').forEach((el) => (el.textContent = username));
+        showToast('账号信息已更新');
+        credentialsModal.classList.remove('open');
+      } catch (err) {
+        errorEl.textContent = err.message;
+      }
+    });
   </script>
 </body>
 </html>

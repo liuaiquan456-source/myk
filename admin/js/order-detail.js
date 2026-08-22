@@ -57,17 +57,32 @@ function buyerKeyForOrder(order) {
   return order.customerId ? `c:${order.customerId}` : `g:${order.customer.email.toLowerCase()}`;
 }
 
-function orderItemRowHtml(order, item, itemIndex) {
+const CURRENCY_OPTIONS = ['USD', 'CNY', 'EUR', 'GBP', 'JPY'];
+
+function orderItemRowHtml(order, item, itemIndex, itemCount) {
   const skuId = item.resolvedSkuId || item.skuId || '';
   const rowKey = `${order.id}:${itemIndex}`;
   const isConfirmed = confirmedRowKeys.has(rowKey);
+  const currency = order.currency || 'USD';
+
+  // Currency applies to the whole order, not each line, so it rowspans like
+  // the order-level cells elsewhere in this table.
+  const currencyCell = itemIndex === 0 ? `
+    <td rowspan="${itemCount}">
+      <select class="status-select" data-order-currency="${order.id}">
+        ${CURRENCY_OPTIONS.map((c) => `<option value="${c}" ${c === currency ? 'selected' : ''}>${c}</option>`).join('')}
+      </select>
+    </td>
+  ` : '';
 
   return `
     <tr data-order-id="${order.id}" data-item-index="${itemIndex}">
       <td>${item.image ? `<img class="thumb" src="${item.image}">` : '<div class="thumb-placeholder"></div>'}</td>
       <td>${escapeHtml(item.name)}${item.color ? ` <span class="order-customer-email">(${escapeHtml(item.color)})</span>` : ''}</td>
+      <td>${item.size ? escapeHtml(item.size) : '<span class="order-customer-email">&mdash;</span>'}</td>
       <td><input type="number" min="1" class="status-select" data-field="quantity" value="${item.quantity}" style="width:60px;"></td>
       <td><input type="number" min="0" step="0.01" class="status-select" data-field="price" value="${item.price}" style="width:80px;"></td>
+      ${currencyCell}
       <td>${skuId ? `<input type="number" min="0" step="1" class="status-select" data-field="stock" data-sku-id="${skuId}" value="${item.stock ?? ''}" placeholder="—" style="width:70px;">` : '<span class="order-customer-email">&mdash;</span>'}</td>
       <td class="order-line-subtotal">$${(item.price * item.quantity).toFixed(2)}</td>
       <td class="row-actions">
@@ -106,6 +121,7 @@ function renderDetail() {
             ${STATUS_OPTIONS.map((s) => `<option value="${s}" ${s === order.status ? 'selected' : ''}>${STATUS_LABELS[s]}</option>`).join('')}
           </select>
           <span class="order-customer-email">${escapeHtml(email)}</span>
+          ${order.note ? `<span class="tag-pill" title="${escapeHtml(order.note)}">备注：${escapeHtml(order.note)}</span>` : ''}
         </div>
         <div class="buyer-group-stats">
           订单 #${order.id} &middot; 总额 $${order.total.toFixed(2)}
@@ -117,14 +133,16 @@ function renderDetail() {
           <tr>
             <th>图片</th>
             <th>商品</th>
+            <th>尺寸</th>
             <th>数量</th>
             <th>单价</th>
+            <th>币种</th>
             <th>库存</th>
             <th>小计</th>
             <th></th>
           </tr>
         </thead>
-        <tbody>${order.items.map((item, i) => orderItemRowHtml(order, item, i)).join('')}</tbody>
+        <tbody>${order.items.map((item, i) => orderItemRowHtml(order, item, i, order.items.length || 1)).join('')}</tbody>
       </table>
     </div>
   `).join('');
@@ -155,6 +173,21 @@ orderGroups.addEventListener('input', (e) => {
 });
 
 orderGroups.addEventListener('change', async (e) => {
+  const currencyOrderId = e.target.dataset.orderCurrency;
+  if (currencyOrderId) {
+    try {
+      await api(`/api/orders/${currencyOrderId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currency: e.target.value }),
+      });
+      showToast('币种已更新');
+    } catch (err) {
+      showToast(err.message);
+    }
+    return;
+  }
+
   const orderId = e.target.dataset.orderId;
   if (!orderId || !e.target.classList.contains('status-select') || e.target.dataset.field) return;
   try {
