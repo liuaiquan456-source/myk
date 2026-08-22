@@ -47,6 +47,22 @@ a {
   background: var(--color-primary);
   border-right: 1px solid var(--color-border);
   padding: 1.5rem 1rem;
+  /* Sticky (not fixed) so it still participates in normal layout flow —
+     pins to the viewport as .admin-main scrolls, which is also what makes
+     the optional glass style below actually have something to blur. */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Optional frosted-glass sidebar (toggled from the Dashboard's 后台外观
+   panel). --color-primary-glass is computed by admin.js from the primary
+   color's hex value at reduced opacity. */
+.admin-sidebar.glass {
+  background: var(--color-primary-glass, var(--color-primary));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .admin-logo {
@@ -632,6 +648,8 @@ img.thumb {
     width: 100%;
     border-right: none;
     border-bottom: 1px solid var(--color-border);
+    position: static;
+    height: auto;
   }
   .form-grid {
     grid-template-columns: 1fr;

@@ -28,6 +28,7 @@ const DEFAULT_ADMIN_THEME = {
   textPrimary: '#1c1a17',
   textSecondary: '#6b6459',
   accent: '#1c1a17',
+  sidebarGlass: false,
 };
 
 // db.json holds real customer data and is gitignored — on a fresh clone it

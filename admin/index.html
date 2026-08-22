@@ -123,6 +123,10 @@
               <input type="color" id="themeTextSecondary">
             </div>
           </div>
+          <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.88rem; margin-bottom:1rem;">
+            <input type="checkbox" id="themeSidebarGlass">
+            侧边栏毛玻璃效果（半透明 + 模糊，主色决定底色）
+          </label>
           <div class="form-actions">
             <button type="button" class="btn btn-sm" id="saveThemeBtn">保存配色</button>
             <button type="button" class="btn btn-sm btn-outline" id="resetThemeBtn">恢复默认</button>
@@ -203,6 +207,7 @@
     // ---------- Admin theme ----------
     // Matches server/db.js's DEFAULT_ADMIN_THEME — used by "恢复默认" since
     // that's the built-in look, not something the API needs to expose.
+    // applyAdminTheme/hexToRgba/ADMIN_THEME_CACHE_KEY come from js/admin.js.
     const DEFAULT_ADMIN_THEME = {
       primary: '#ffffff',
       secondary: '#ffffff',
@@ -210,9 +215,10 @@
       textPrimary: '#1c1a17',
       textSecondary: '#6b6459',
       accent: '#1c1a17',
+      sidebarGlass: false,
     };
 
-    const themeFields = {
+    const themeColorFields = {
       primary: document.getElementById('themePrimary'),
       secondary: document.getElementById('themeSecondary'),
       background: document.getElementById('themeBackground'),
@@ -220,21 +226,29 @@
       textSecondary: document.getElementById('themeTextSecondary'),
       accent: document.getElementById('themeAccent'),
     };
-
-    function applyThemeLive(theme) {
-      const root = document.documentElement.style;
-      root.setProperty('--color-primary', theme.primary);
-      root.setProperty('--color-panel', theme.secondary);
-      root.setProperty('--color-bg', theme.background);
-      root.setProperty('--color-text', theme.textPrimary);
-      root.setProperty('--color-text-muted', theme.textSecondary);
-      root.setProperty('--color-accent', theme.accent);
-    }
+    const themeSidebarGlassField = document.getElementById('themeSidebarGlass');
 
     function fillThemeFields(theme) {
-      Object.entries(themeFields).forEach(([key, input]) => {
+      Object.entries(themeColorFields).forEach(([key, input]) => {
         input.value = theme[key];
       });
+      themeSidebarGlassField.checked = !!theme.sidebarGlass;
+    }
+
+    function readThemeFields() {
+      const theme = Object.fromEntries(Object.entries(themeColorFields).map(([key, input]) => [key, input.value]));
+      theme.sidebarGlass = themeSidebarGlassField.checked;
+      return theme;
+    }
+
+    async function saveTheme(theme) {
+      await api('/api/admin-theme', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(theme),
+      });
+      applyAdminTheme(theme);
+      localStorage.setItem(ADMIN_THEME_CACHE_KEY, JSON.stringify(theme));
     }
 
     (async () => {
@@ -243,14 +257,8 @@
     })();
 
     document.getElementById('saveThemeBtn').addEventListener('click', async () => {
-      const theme = Object.fromEntries(Object.entries(themeFields).map(([key, input]) => [key, input.value]));
       try {
-        await api('/api/admin-theme', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(theme),
-        });
-        applyThemeLive(theme);
+        await saveTheme(readThemeFields());
         showToast('配色已保存');
       } catch (err) {
         showToast(err.message);
@@ -260,12 +268,7 @@
     document.getElementById('resetThemeBtn').addEventListener('click', async () => {
       fillThemeFields(DEFAULT_ADMIN_THEME);
       try {
-        await api('/api/admin-theme', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(DEFAULT_ADMIN_THEME),
-        });
-        applyThemeLive(DEFAULT_ADMIN_THEME);
+        await saveTheme(DEFAULT_ADMIN_THEME);
         showToast('已恢复默认配色');
       } catch (err) {
         showToast(err.message);

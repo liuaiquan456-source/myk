@@ -794,7 +794,7 @@ app.put('/api/admin-theme', (req, res) => {
   if (!getAdminSession(req)) return res.status(401).json({ error: 'Not authenticated' });
 
   const db = load();
-  const { primary, secondary, background, textPrimary, textSecondary, accent } = req.body || {};
+  const { primary, secondary, background, textPrimary, textSecondary, accent, sidebarGlass } = req.body || {};
   db.adminTheme = {
     primary: primary || db.adminTheme.primary,
     secondary: secondary || db.adminTheme.secondary,
@@ -802,6 +802,9 @@ app.put('/api/admin-theme', (req, res) => {
     textPrimary: textPrimary || db.adminTheme.textPrimary,
     textSecondary: textSecondary || db.adminTheme.textSecondary,
     accent: accent || db.adminTheme.accent,
+    // Boolean, so !== undefined (not ||) — otherwise turning it off (false)
+    // would be indistinguishable from "not sent" and silently ignored.
+    sidebarGlass: sidebarGlass !== undefined ? !!sidebarGlass : db.adminTheme.sidebarGlass,
   };
   save(db);
   res.json(db.adminTheme);
