@@ -836,10 +836,34 @@ function initAccountModal() {
   const overlay = document.getElementById('authModalOverlay');
   if (!icon || !overlay) return;
 
+  // Same locale mechanism as the header switcher (js/i18n.js) — setLocale +
+  // applyLocale persist to localStorage and re-translate the current page,
+  // so every other page picks up the choice on its next load too.
+  const localeSelect = document.getElementById('authModalLocale');
+  let localeOptionsLoaded = false;
+  async function ensureLocaleOptions() {
+    if (localeOptionsLoaded || !localeSelect) return;
+    localeOptionsLoaded = true;
+    const locales = await (await fetch('/api/locales')).json();
+    localeSelect.innerHTML = locales
+      .map((l) => `<option value="${l.code}">${escapeHtmlLocal(l.nativeName)}</option>`)
+      .join('');
+    localeSelect.value = getLocale();
+  }
+
+  localeSelect?.addEventListener('change', async () => {
+    setLocale(localeSelect.value);
+    await applyLocale(localeSelect.value);
+    const headerLabel = document.getElementById('currentLocaleLabel');
+    const selectedOption = localeSelect.selectedOptions[0];
+    if (headerLabel && selectedOption) headerLabel.textContent = selectedOption.textContent;
+  });
+
   icon.addEventListener('click', (e) => {
     if (getStoredCustomer()) return; // logged in: let the link go to account.html
     e.preventDefault();
     overlay.classList.add('open');
+    ensureLocaleOptions();
   });
 
   document.getElementById('authModalClose').addEventListener('click', () => {

@@ -1501,7 +1501,8 @@ img.shop-by-image-photo,
 }
 
 .form-field input,
-.form-field textarea {
+.form-field textarea,
+.form-field select {
   padding: 0.6rem 0.7rem;
   border: 1px solid var(--color-border);
   border-radius: 4px;
