@@ -68,11 +68,30 @@
             <button type="button" class="btn btn-sm" id="openCredentialsBtn">修改账号密码</button>
           </div>
         </div>
-        <div class="panel full" style="grid-column: 1 / -1;">
+        <div class="panel">
           <h2>首页布局</h2>
           <p style="color:var(--color-text-muted); font-size:0.85rem;">编辑首页横幅内容，并管理各板块展示的商品系列。</p>
           <div class="form-actions">
             <a class="btn btn-sm" href="layout.html">管理布局</a>
+          </div>
+        </div>
+        <div class="panel">
+          <h2>官方联系方式</h2>
+          <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:0.8rem;">前台悬浮按钮和客户找不到分销商时使用的默认联系方式。</p>
+          <div class="form-field">
+            <label>WhatsApp <span style="font-weight:400; color:var(--color-text-muted);">（含国家区号，如 8613800000000）</span></label>
+            <input type="text" id="contactWhatsapp" placeholder="例如：8613800000000">
+          </div>
+          <div class="form-field">
+            <label>微信号</label>
+            <input type="text" id="contactWechat" placeholder="例如：myk_official">
+          </div>
+          <div class="form-field">
+            <label>客服邮箱</label>
+            <input type="text" id="contactEmail" placeholder="例如：support@mykjewelry.com">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-sm" id="saveContactBtn">保存</button>
           </div>
         </div>
       </div>
@@ -119,6 +138,33 @@
       document.getElementById('statCategories').textContent = categories.length;
       document.getElementById('statOrders').textContent = orders.length;
     })();
+
+    (async () => {
+      const layout = await api('/api/layout');
+      document.getElementById('contactWhatsapp').value = layout.contactWhatsapp || '';
+      document.getElementById('contactWechat').value = layout.contactWechat || '';
+      document.getElementById('contactEmail').value = layout.contactEmail || '';
+    })();
+
+    document.getElementById('saveContactBtn').addEventListener('click', async () => {
+      try {
+        // PUT /api/layout replaces the whole object, so fetch the current one
+        // first and only touch these three fields — otherwise this would
+        // wipe out the hero/blocks settings managed on the Layout page.
+        const layout = await api('/api/layout');
+        layout.contactWhatsapp = document.getElementById('contactWhatsapp').value.trim();
+        layout.contactWechat = document.getElementById('contactWechat').value.trim();
+        layout.contactEmail = document.getElementById('contactEmail').value.trim();
+        await api('/api/layout', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(layout),
+        });
+        showToast('联系方式已保存');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
 
     const credentialsModal = document.getElementById('credentialsModal');
     const credentialsForm = document.getElementById('credentialsForm');
