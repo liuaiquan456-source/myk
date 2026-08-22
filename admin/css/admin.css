@@ -814,7 +814,10 @@ img.thumb {
   padding: 0.15rem 0.5rem;
   border-radius: 20px;
   margin-left: 0.5rem;
-  background: var(--color-accent);
+  /* Fixed green regardless of the admin's theme accent — this is a status
+     indicator ("registered"), not a themeable UI accent, so it shouldn't
+     shift color (e.g. to red) just because the accent picker was set to one. */
+  background: #3f8f5f;
   color: #fff;
   vertical-align: middle;
 }
