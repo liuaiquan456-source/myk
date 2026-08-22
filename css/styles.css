@@ -1753,13 +1753,14 @@ img.shop-by-image-photo,
 .auth-modal-choice h2 {
   font-size: 1.3rem;
   font-weight: 500;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1.2rem;
 }
 
 .auth-modal-choice-subtitle {
   color: var(--color-text-muted);
-  font-size: 0.88rem;
-  margin-bottom: 1.5rem;
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 1.2rem;
 }
 
 .auth-modal-choice .btn + .btn {

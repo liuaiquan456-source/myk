@@ -859,11 +859,15 @@ function initAccountModal() {
     if (headerLabel && selectedOption) headerLabel.textContent = selectedOption.textContent;
   });
 
+  function openAuthModal() {
+    overlay.classList.add('open');
+    ensureLocaleOptions();
+  }
+
   icon.addEventListener('click', (e) => {
     if (getStoredCustomer()) return; // logged in: let the link go to account.html
     e.preventDefault();
-    overlay.classList.add('open');
-    ensureLocaleOptions();
+    openAuthModal();
   });
 
   document.getElementById('authModalClose').addEventListener('click', () => {
@@ -872,6 +876,16 @@ function initAccountModal() {
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) overlay.classList.remove('open');
   });
+
+  // First-ever visit to the site (and not already signed in): show the
+  // chooser right away instead of waiting for the account icon to be
+  // clicked. The flag is set immediately so this only ever fires once per
+  // browser, regardless of which page that first visit lands on.
+  const FIRST_VISIT_SEEN_KEY = 'myk_seen_account_modal';
+  if (!getStoredCustomer() && !localStorage.getItem(FIRST_VISIT_SEEN_KEY)) {
+    localStorage.setItem(FIRST_VISIT_SEEN_KEY, '1');
+    openAuthModal();
+  }
 }
 
 initAccountModal();
