@@ -321,6 +321,7 @@ img.thumb {
 
 .form-field input[type="text"],
 .form-field input[type="number"],
+.form-field input[type="password"],
 .form-field input[type="file"],
 .form-field select,
 .form-field textarea {
@@ -330,6 +331,34 @@ img.thumb {
   font-size: 0.88rem;
   font-family: inherit;
   background: #fff;
+}
+
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper input[type="password"],
+.password-input-wrapper input[type="text"] {
+  width: 100%;
+  padding-right: 2.4rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  padding: 0.2rem;
+}
+
+.password-toggle:hover {
+  color: var(--color-text);
 }
 
 .checkbox-group {

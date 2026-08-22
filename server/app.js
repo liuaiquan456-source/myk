@@ -64,6 +64,30 @@ app.post('/api/admin/logout', (req, res) => {
   res.status(204).end();
 });
 
+// Requires both an active session and the current password — this is more
+// sensitive than the rest of the admin API (which isn't session-gated), so
+// it gets the extra check on top of the re-auth already required by the form.
+app.put('/api/admin/credentials', (req, res) => {
+  if (!getAdminSession(req)) return res.status(401).json({ error: 'Not authenticated' });
+
+  const db = load();
+  const admin = db.admin;
+  const { currentPassword, newPassword } = req.body || {};
+  if (!currentPassword || !admin || !verifyPassword(currentPassword, admin.password)) {
+    return res.status(401).json({ error: '当前密码不正确' });
+  }
+
+  if (newPassword) {
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: '新密码至少需要 6 位' });
+    }
+    admin.password = hashPassword(newPassword);
+  }
+
+  save(db);
+  res.json({ username: admin.username });
+});
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, UPLOADS_DIR),
   filename: (req, file, cb) => {
