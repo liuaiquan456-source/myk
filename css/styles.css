@@ -1370,6 +1370,29 @@ img.shop-by-image-photo,
   z-index: 200;
 }
 
+/* Floating WhatsApp contact button — left side so it never collides with
+   .cart-toast, which pops up bottom-right. Hidden by default; js/store.js's
+   initWhatsappFloat only reveals it once a number (distributor's or the
+   store default) is actually available. */
+.whatsapp-float {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #25d366;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  z-index: 200;
+  transition: transform 0.2s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.08);
+}
+
 .cart-toast.show {
   opacity: 1;
   transform: translateY(0);

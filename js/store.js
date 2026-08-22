@@ -1080,3 +1080,33 @@ async function renderOrdersDrawerContents() {
 }
 
 initOrdersDrawer();
+
+// ---------- Floating WhatsApp contact ----------
+// Signed-in customer with a distributor assigned (Buyer Manager, matched by
+// name against the distributor list) gets that distributor's WhatsApp;
+// everyone else gets the store's default number from admin Page Layout.
+// If neither is configured, the button just stays hidden.
+
+async function initWhatsappFloat() {
+  const btn = document.getElementById('whatsappFloatBtn');
+  if (!btn) return;
+
+  const [layout, distributors] = await Promise.all([
+    fetchJSON('/api/layout'),
+    fetchJSON('/api/distributors'),
+  ]);
+
+  let number = layout.contactWhatsapp || '';
+  const customer = getStoredCustomer();
+  if (customer && customer.buyerManager) {
+    const distributor = distributors.find((d) => d.name === customer.buyerManager);
+    if (distributor && distributor.whatsapp) number = distributor.whatsapp;
+  }
+
+  const digits = number.replace(/[^0-9]/g, '');
+  if (!digits) return;
+  btn.href = `https://wa.me/${digits}`;
+  btn.style.display = 'flex';
+}
+
+initWhatsappFloat();

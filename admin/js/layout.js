@@ -5,6 +5,7 @@ const heroImage = document.getElementById('heroImage');
 const heroImagePreview = document.getElementById('heroImagePreview');
 const heroImageUrl = document.getElementById('heroImageUrl');
 const shopByCategoryEnabled = document.getElementById('shopByCategoryEnabled');
+const contactWhatsapp = document.getElementById('contactWhatsapp');
 const blocksList = document.getElementById('blocksList');
 
 let layout = null;
@@ -72,6 +73,7 @@ async function loadLayout() {
     heroImagePreview.style.display = 'block';
   }
   shopByCategoryEnabled.checked = !!layout.shopByCategoryEnabled;
+  contactWhatsapp.value = layout.contactWhatsapp || '';
   renderBlocks();
 }
 
@@ -296,6 +298,7 @@ document.getElementById('saveLayoutBtn').addEventListener('click', async () => {
   layout.hero.buttonText = heroButtonText.value;
   layout.hero.image = heroImageUrl.value || null;
   layout.shopByCategoryEnabled = shopByCategoryEnabled.checked;
+  layout.contactWhatsapp = contactWhatsapp.value.trim();
 
   try {
     await api('/api/layout', {
