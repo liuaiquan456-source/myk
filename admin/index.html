@@ -94,6 +94,40 @@
             <button type="button" class="btn btn-sm" id="saveContactBtn">保存</button>
           </div>
         </div>
+        <div class="panel full" style="grid-column: 1 / -1;">
+          <h2>后台外观</h2>
+          <p style="color:var(--color-text-muted); font-size:0.85rem; margin-bottom:1rem;">自定义管理后台的配色，保存后立即对所有后台页面生效（不影响前台商城的样式）。</p>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>主色 <span style="font-weight:400; color:var(--color-text-muted);">（侧边栏背景）</span></label>
+              <input type="color" id="themePrimary">
+            </div>
+            <div class="form-field">
+              <label>辅助色 <span style="font-weight:400; color:var(--color-text-muted);">（卡片、弹窗背景）</span></label>
+              <input type="color" id="themeSecondary">
+            </div>
+            <div class="form-field">
+              <label>背景色 <span style="font-weight:400; color:var(--color-text-muted);">（页面底色）</span></label>
+              <input type="color" id="themeBackground">
+            </div>
+            <div class="form-field">
+              <label>强调色 <span style="font-weight:400; color:var(--color-text-muted);">（按钮、选中状态）</span></label>
+              <input type="color" id="themeAccent">
+            </div>
+            <div class="form-field">
+              <label>文字主色</label>
+              <input type="color" id="themeTextPrimary">
+            </div>
+            <div class="form-field">
+              <label>文字次色</label>
+              <input type="color" id="themeTextSecondary">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-sm" id="saveThemeBtn">保存配色</button>
+            <button type="button" class="btn btn-sm btn-outline" id="resetThemeBtn">恢复默认</button>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -161,6 +195,78 @@
           body: JSON.stringify(layout),
         });
         showToast('联系方式已保存');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    // ---------- Admin theme ----------
+    // Matches server/db.js's DEFAULT_ADMIN_THEME — used by "恢复默认" since
+    // that's the built-in look, not something the API needs to expose.
+    const DEFAULT_ADMIN_THEME = {
+      primary: '#ffffff',
+      secondary: '#ffffff',
+      background: '#faf8f5',
+      textPrimary: '#1c1a17',
+      textSecondary: '#6b6459',
+      accent: '#1c1a17',
+    };
+
+    const themeFields = {
+      primary: document.getElementById('themePrimary'),
+      secondary: document.getElementById('themeSecondary'),
+      background: document.getElementById('themeBackground'),
+      textPrimary: document.getElementById('themeTextPrimary'),
+      textSecondary: document.getElementById('themeTextSecondary'),
+      accent: document.getElementById('themeAccent'),
+    };
+
+    function applyThemeLive(theme) {
+      const root = document.documentElement.style;
+      root.setProperty('--color-primary', theme.primary);
+      root.setProperty('--color-panel', theme.secondary);
+      root.setProperty('--color-bg', theme.background);
+      root.setProperty('--color-text', theme.textPrimary);
+      root.setProperty('--color-text-muted', theme.textSecondary);
+      root.setProperty('--color-accent', theme.accent);
+    }
+
+    function fillThemeFields(theme) {
+      Object.entries(themeFields).forEach(([key, input]) => {
+        input.value = theme[key];
+      });
+    }
+
+    (async () => {
+      const theme = await api('/api/admin-theme');
+      fillThemeFields(theme);
+    })();
+
+    document.getElementById('saveThemeBtn').addEventListener('click', async () => {
+      const theme = Object.fromEntries(Object.entries(themeFields).map(([key, input]) => [key, input.value]));
+      try {
+        await api('/api/admin-theme', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(theme),
+        });
+        applyThemeLive(theme);
+        showToast('配色已保存');
+      } catch (err) {
+        showToast(err.message);
+      }
+    });
+
+    document.getElementById('resetThemeBtn').addEventListener('click', async () => {
+      fillThemeFields(DEFAULT_ADMIN_THEME);
+      try {
+        await api('/api/admin-theme', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(DEFAULT_ADMIN_THEME),
+        });
+        applyThemeLive(DEFAULT_ADMIN_THEME);
+        showToast('已恢复默认配色');
       } catch (err) {
         showToast(err.message);
       }

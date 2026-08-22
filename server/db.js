@@ -17,6 +17,19 @@ const DEFAULT_CURRENCIES = [
   { code: 'INR', name: 'Indian Rupee', symbol: '₹', rate: 11.9 },
 ];
 
+// Matches admin.css's built-in :root defaults exactly, so backfilling this
+// (or an admin who never touches the theme panel) changes nothing visually —
+// admin/js/admin.js only overrides the CSS variables once these differ from
+// the built-in look.
+const DEFAULT_ADMIN_THEME = {
+  primary: '#ffffff',
+  secondary: '#ffffff',
+  background: '#faf8f5',
+  textPrimary: '#1c1a17',
+  textSecondary: '#6b6459',
+  accent: '#1c1a17',
+};
+
 // db.json holds real customer data and is gitignored — on a fresh clone it
 // won't exist yet, so bootstrap it from the sanitized example on first run.
 function load() {
@@ -34,6 +47,10 @@ function load() {
   if (!db.inquiries) {
     db.inquiries = [];
     db.nextInquiryId = 1;
+    save(db);
+  }
+  if (!db.adminTheme) {
+    db.adminTheme = { ...DEFAULT_ADMIN_THEME };
     save(db);
   }
 

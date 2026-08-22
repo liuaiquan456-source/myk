@@ -1,12 +1,21 @@
 :root {
+  /* Theme-able tokens — admin/js/admin.js overrides these inline from
+     /api/admin-theme (set on the Dashboard's "后台外观" panel). The values
+     below are just the built-in default look, applied until an admin
+     actually picks their own colors. */
+  --color-primary: #ffffff;
   --color-bg: #faf8f5;
   --color-panel: #ffffff;
   --color-text: #1c1a17;
   --color-text-muted: #6b6459;
+  --color-accent: #1c1a17;
+
   --color-border: #e4ddd2;
-  --color-gold: #c9a961;
-  --color-gold-dark: #a9853f;
   --color-danger: #b5473c;
+
+  /* Not theme-able — represents an actual gold jewelry tone for
+     "no product photo" placeholder thumbnails, not admin branding. */
+  --color-gold: #c9a961;
 }
 
 * {
@@ -35,7 +44,7 @@ a {
 .admin-sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: #fff;
+  background: var(--color-primary);
   border-right: 1px solid var(--color-border);
   padding: 1.5rem 1rem;
 }
@@ -72,7 +81,7 @@ a {
 }
 
 .admin-nav a.active {
-  background: var(--color-text);
+  background: var(--color-accent);
   color: #fff;
 }
 
@@ -116,7 +125,7 @@ a {
   border-radius: 6px;
   border: 1px solid transparent;
   cursor: pointer;
-  background: var(--color-text);
+  background: var(--color-accent);
   color: #fff;
   transition: opacity 0.2s ease;
 }
@@ -266,7 +275,7 @@ img.thumb {
 
 .admin-tab.active {
   color: var(--color-text);
-  border-bottom-color: var(--color-gold-dark);
+  border-bottom-color: var(--color-accent);
   font-weight: 600;
 }
 
@@ -331,6 +340,16 @@ img.thumb {
   font-size: 0.88rem;
   font-family: inherit;
   background: #fff;
+}
+
+.form-field input[type="color"] {
+  width: 100%;
+  height: 2.4rem;
+  padding: 0.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
 }
 
 .password-input-wrapper {
@@ -416,8 +435,8 @@ img.thumb {
 }
 
 .gallery-item.drag-over {
-  border-color: var(--color-gold-dark);
-  box-shadow: 0 0 0 2px var(--color-gold-dark);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 2px var(--color-accent);
 }
 
 .gallery-item .cover-label {
@@ -517,7 +536,7 @@ img.thumb {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  background: var(--color-text);
+  background: var(--color-accent);
   color: #fff;
   padding: 0.7rem 1.2rem;
   border-radius: 6px;
@@ -551,7 +570,7 @@ img.thumb {
 
 .modal {
   position: relative;
-  background: #fff;
+  background: var(--color-panel);
   border-radius: 10px;
   padding: 1.8rem;
   width: 100%;
@@ -777,7 +796,7 @@ img.thumb {
   padding: 0.15rem 0.5rem;
   border-radius: 20px;
   margin-left: 0.5rem;
-  background: var(--color-gold);
+  background: var(--color-accent);
   color: #fff;
   vertical-align: middle;
 }

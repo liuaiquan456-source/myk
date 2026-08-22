@@ -1,3 +1,24 @@
+// Applies the admin's chosen backend color theme (set on the Dashboard) as
+// CSS custom property overrides — admin.css's :root values are just the
+// built-in default until this runs. Kept separate from the session check
+// below so a slow/failed theme fetch never blocks or breaks page access.
+(async () => {
+  try {
+    const res = await fetch('/api/admin-theme');
+    if (!res.ok) return;
+    const theme = await res.json();
+    const root = document.documentElement.style;
+    if (theme.primary) root.setProperty('--color-primary', theme.primary);
+    if (theme.secondary) root.setProperty('--color-panel', theme.secondary);
+    if (theme.background) root.setProperty('--color-bg', theme.background);
+    if (theme.textPrimary) root.setProperty('--color-text', theme.textPrimary);
+    if (theme.textSecondary) root.setProperty('--color-text-muted', theme.textSecondary);
+    if (theme.accent) root.setProperty('--color-accent', theme.accent);
+  } catch (e) {
+    // Leave the built-in default theme in place.
+  }
+})();
+
 // Every admin page except login.html loads this script, so the session
 // check here is what actually gates access to the panel.
 (async () => {

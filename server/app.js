@@ -779,6 +779,34 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   res.json({ url: `/uploads/${req.file.filename}` });
 });
 
+// ---------- Admin theme ----------
+// Lets the admin re-skin the backend itself (sidebar, buttons, panels, text)
+// without touching CSS — admin/js/admin.js applies these as CSS custom
+// property overrides on every admin page load. Unrelated to the storefront,
+// which has its own fixed brand styling.
+
+app.get('/api/admin-theme', (req, res) => {
+  const db = load();
+  res.json(db.adminTheme);
+});
+
+app.put('/api/admin-theme', (req, res) => {
+  if (!getAdminSession(req)) return res.status(401).json({ error: 'Not authenticated' });
+
+  const db = load();
+  const { primary, secondary, background, textPrimary, textSecondary, accent } = req.body || {};
+  db.adminTheme = {
+    primary: primary || db.adminTheme.primary,
+    secondary: secondary || db.adminTheme.secondary,
+    background: background || db.adminTheme.background,
+    textPrimary: textPrimary || db.adminTheme.textPrimary,
+    textSecondary: textSecondary || db.adminTheme.textSecondary,
+    accent: accent || db.adminTheme.accent,
+  };
+  save(db);
+  res.json(db.adminTheme);
+});
+
 // ---------- Error handling ----------
 
 app.use((err, req, res, next) => {
