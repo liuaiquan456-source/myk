@@ -71,7 +71,7 @@ function renderProductImage(product) {
       : '';
     // loading="lazy": a listing page can have 40+ of these — only the ones
     // near the viewport should compete for bandwidth at once.
-    return `<div class="product-image img-loading"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}" loading="lazy" decoding="async" ${CARD_IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
+    return `<div class="product-image img-loading"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(translateContentText(product.name))}" loading="lazy" decoding="async" ${CARD_IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
   }
   return `<div class="product-image ${colorsToPlaceholder(product.colors)}">${badgeHtml}</div>`;
 }
@@ -80,7 +80,7 @@ function renderProductCard(product) {
   return `
     <div class="product-card" data-product-id="${product.id}">
       ${renderProductImage(product)}
-      <p class="product-name">${escapeHtmlLocal(product.name)}</p>
+      <p class="product-name">${escapeHtmlLocal(translateContentText(product.name))}</p>
       <p class="product-price">$${minSkuPrice(product).toFixed(2)}</p>
     </div>
   `;
@@ -98,7 +98,7 @@ function renderListingProductCard(product) {
     <div class="product-card" data-product-id="${product.id}">
       ${renderProductImage(product)}
       <p class="product-action" data-i18n="${actionKey}" ${actionAttr}>${actionText}</p>
-      <p class="product-name">${escapeHtmlLocal(product.name)}</p>
+      <p class="product-name">${escapeHtmlLocal(translateContentText(product.name))}</p>
       <p class="product-price">$${minSkuPrice(product).toFixed(2)}</p>
       <div class="color-swatches">${swatches}</div>
     </div>
@@ -123,7 +123,7 @@ function renderCategoryBlockSection(block, products) {
   return `
     <section class="category-block ${block.altBackground ? 'alt-bg' : ''}">
       <div class="category-header">
-        <h2>${escapeHtmlLocal(block.title)}</h2>
+        <h2>${escapeHtmlLocal(translateContentText(block.title))}</h2>
         <a href="new-in.html" class="link-more">View All &rarr;</a>
       </div>
       <div class="product-grid">
@@ -143,11 +143,11 @@ async function renderHomepage() {
   const categoriesPromise = fetchJSON('/api/categories');
   const productsPromise = fetchJSON('/api/products');
 
-  const layout = await layoutPromise;
+  const [layout] = await Promise.all([layoutPromise, window.i18nReady]);
 
-  document.getElementById('heroEyebrow').textContent = layout.hero.eyebrow || '';
-  document.getElementById('heroHeading').textContent = layout.hero.heading || '';
-  document.getElementById('heroButton').textContent = layout.hero.buttonText || 'Shop Now';
+  document.getElementById('heroEyebrow').textContent = translateContentText(layout.hero.eyebrow || '');
+  document.getElementById('heroHeading').textContent = translateContentText(layout.hero.heading || '');
+  document.getElementById('heroButton').textContent = translateContentText(layout.hero.buttonText || 'Shop Now');
 
   if (layout.hero.image) {
     const heroEl = document.getElementById('heroFull');
@@ -175,9 +175,9 @@ async function renderHomepage() {
     document.getElementById('shopByGrid').innerHTML = topLevelCategories.map((cat, i) => `
       <a href="new-in.html?category=${encodeURIComponent(cat.slug)}" class="shop-by-item">
         <div class="shop-by-image ${cat.image ? '' : placeholderCycle[i % placeholderCycle.length]}">
-          ${cat.image ? `<img class="shop-by-image-photo img-loading" src="${cat.image}" alt="${escapeHtmlLocal(cat.name)}" ${IMG_LOADING_ATTRS}>` : ''}
+          ${cat.image ? `<img class="shop-by-image-photo img-loading" src="${cat.image}" alt="${escapeHtmlLocal(translateContentText(cat.name))}" ${IMG_LOADING_ATTRS}>` : ''}
         </div>
-        <p>${escapeHtmlLocal(cat.name)}</p>
+        <p>${escapeHtmlLocal(translateContentText(cat.name))}</p>
       </a>
     `).join('');
   } else {
@@ -213,6 +213,7 @@ async function renderHomepage() {
 const BADGE_FILTER_LABELS = { sale: 'Sale', 'low-stock': 'Low Stock', 'sold-out': 'Sold Out' };
 
 async function renderNewIn() {
+  await window.i18nReady;
   const grid = document.getElementById('newInGrid');
   const heading = document.getElementById('pageHeading');
   const params = new URLSearchParams(window.location.search);
@@ -229,7 +230,7 @@ async function renderNewIn() {
   } else if (categorySlug) {
     const categories = await fetchJSON('/api/categories');
     const category = categories.find((c) => c.slug === categorySlug);
-    if (heading) { heading.removeAttribute('data-i18n'); heading.textContent = category ? category.name : 'Products'; }
+    if (heading) { heading.removeAttribute('data-i18n'); heading.textContent = category ? translateContentText(category.name) : 'Products'; }
     products = await fetchJSON(`/api/products?category=${encodeURIComponent(categorySlug)}`);
   } else {
     // No category/search filter — New In is just every product, newest first
@@ -360,7 +361,7 @@ async function renderWishlistPage() {
     return;
   }
 
-  const allProducts = await fetchJSON('/api/products');
+  const [allProducts] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
   const products = ids.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
 
   if (!products.length) {
@@ -403,13 +404,14 @@ function renderBundleSection(product, allProducts) {
 
   document.getElementById('pdpBundleList').innerHTML = items.map((p, i) => {
     const skus = (p.skus && p.skus.length) ? p.skus : [{ id: null, color: '', price: p.price }];
-    const label = i === 0 ? `This Item: ${escapeHtmlLocal(p.name)}` : escapeHtmlLocal(p.name);
+    const displayName = escapeHtmlLocal(translateContentText(p.name));
+    const label = i === 0 ? `This Item: ${displayName}` : displayName;
     const showVariant = skus.length > 1 || skus[0].color;
     return `
       <div class="pdp-bundle-item" data-product-id="${p.id}">
         <input type="checkbox" data-bundle-check checked>
         <span class="pdp-bundle-item-name">${label}</span>
-        ${showVariant ? `<select class="pdp-bundle-item-variant" data-bundle-variant>${skus.map((s) => `<option value="${s.id || ''}" data-price="${s.price}">${escapeHtmlLocal(s.color || 'Default')}</option>`).join('')}</select>` : ''}
+        ${showVariant ? `<select class="pdp-bundle-item-variant" data-bundle-variant>${skus.map((s) => `<option value="${s.id || ''}" data-price="${s.price}">${escapeHtmlLocal(translateContentText(s.color || 'Default'))}</option>`).join('')}</select>` : ''}
         <span class="pdp-bundle-item-price" data-bundle-price>$${Number(skus[0].price).toFixed(2)}</span>
       </div>
     `;
@@ -452,13 +454,15 @@ async function renderProductDetail() {
   const [products, categories] = await Promise.all([
     fetchJSON('/api/products'),
     fetchJSON('/api/categories'),
+    window.i18nReady,
   ]);
   if (!products.length) return;
 
   const product = (requestedId && products.find((p) => p.id === Number(requestedId))) || products[0];
   const category = categories.find((c) => c.slug === product.categorySlug);
+  const productDisplayName = translateContentText(product.name);
 
-  document.title = `${product.name} | MYK`;
+  document.title = `${productDisplayName} | MYK`;
   if (typeof addToRecentlyViewed === 'function') addToRecentlyViewed(product.id);
 
   const addBtn = document.querySelector('.pdp-add-btn');
@@ -471,11 +475,11 @@ async function renderProductDetail() {
   }
 
   const breadcrumbCategory = document.getElementById('breadcrumbCategory');
-  breadcrumbCategory.textContent = category ? category.name : product.categorySlug;
+  breadcrumbCategory.textContent = category ? translateContentText(category.name) : product.categorySlug;
   breadcrumbCategory.href = category ? `new-in.html?category=${encodeURIComponent(category.slug)}` : '#';
-  document.getElementById('breadcrumbName').textContent = product.name;
+  document.getElementById('breadcrumbName').textContent = productDisplayName;
 
-  document.getElementById('pdpTitle').textContent = product.name;
+  document.getElementById('pdpTitle').textContent = productDisplayName;
 
   const pdpMaterial = document.getElementById('pdpMaterial');
   if (product.material) {
@@ -548,7 +552,7 @@ async function renderProductDetail() {
     : (product.colors || []).map((color) => ({ id: null, color, price: product.price, image: null }));
 
   function selectSku(sku) {
-    document.getElementById('colorValue').textContent = sku.color[0].toUpperCase() + sku.color.slice(1);
+    document.getElementById('colorValue').textContent = translateContentText(sku.color[0].toUpperCase() + sku.color.slice(1));
     document.getElementById('pdpPriceValue').textContent = `$${Number(sku.price).toFixed(2)}`;
     if (addBtn) addBtn.dataset.skuId = sku.id || '';
     if (sku.image) {
@@ -568,7 +572,7 @@ async function renderProductDetail() {
   if (skus.length) {
     colorOptionGroup.style.display = '';
     document.getElementById('colorSwatches').innerHTML = skus
-      .map((sku, i) => `<button class="pdp-swatch ${variantPlaceholderClass(sku.color)} ${i === 0 ? 'active' : ''}" data-sku-index="${i}" data-color="${sku.color}" title="${escapeHtmlLocal(sku.color)}"></button>`)
+      .map((sku, i) => `<button class="pdp-swatch ${variantPlaceholderClass(sku.color)} ${i === 0 ? 'active' : ''}" data-sku-index="${i}" data-color="${sku.color}" title="${escapeHtmlLocal(translateContentText(sku.color))}"></button>`)
       .join('');
     selectSku(skus[0]);
 
@@ -613,7 +617,7 @@ async function renderCartPage() {
   emptyState.style.display = 'none';
   content.style.display = 'grid';
 
-  const products = await fetchJSON('/api/products');
+  const [products] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
   const lines = cart
     .map((item) => {
       const product = products.find((p) => p.id === item.productId);
@@ -625,7 +629,7 @@ async function renderCartPage() {
 
   function lineImageHtml(line) {
     const image = (line.sku && line.sku.image) || (line.product.images && line.product.images[0]);
-    if (image) return `<div class="cart-item-image"><img class="img-loading" src="${image}" alt="${escapeHtmlLocal(line.product.name)}" ${IMG_LOADING_ATTRS}></div>`;
+    if (image) return `<div class="cart-item-image"><img class="img-loading" src="${image}" alt="${escapeHtmlLocal(translateContentText(line.product.name))}" ${IMG_LOADING_ATTRS}></div>`;
     return `<div class="cart-item-image ${colorsToPlaceholder(line.product.colors)}"></div>`;
   }
 
@@ -639,8 +643,8 @@ async function renderCartPage() {
       <div class="cart-item" data-product-id="${line.product.id}" data-sku-id="${line.skuId || ''}" data-size="${escapeHtmlLocal(line.size || '')}">
         ${lineImageHtml(line)}
         <div>
-          <p class="cart-item-name">${escapeHtmlLocal(line.product.name)}</p>
-          ${line.sku ? `<p class="cart-item-color">${line.sku.color[0].toUpperCase() + line.sku.color.slice(1)}</p>` : ''}
+          <p class="cart-item-name">${escapeHtmlLocal(translateContentText(line.product.name))}</p>
+          ${line.sku ? `<p class="cart-item-color">${translateContentText(line.sku.color[0].toUpperCase() + line.sku.color.slice(1))}</p>` : ''}
           ${line.size ? `<p class="cart-item-color">${escapeHtmlLocal(line.size)}</p>` : ''}
           <p class="cart-item-price">$${Number(linePrice(line)).toFixed(2)} each</p>
           <div class="cart-qty">
@@ -744,20 +748,20 @@ async function renderNavCategoryLinks() {
   const navLinks = document.getElementById('navCategoryLinks');
   if (!navLinks) return;
 
-  const categories = await fetchJSON('/api/categories');
+  const [categories] = await Promise.all([fetchJSON('/api/categories'), window.i18nReady]);
   const topLevel = categories.filter((c) => !c.parentId);
 
   // Each root category with subcategories gets its own hover dropdown listing
   // just those — a root with no children is a plain link.
   navLinks.innerHTML = topLevel.map((cat) => {
     const children = categories.filter((c) => c.parentId === cat.id);
-    const link = `<a href="new-in.html?category=${encodeURIComponent(cat.slug)}">${escapeHtmlLocal(cat.name)}</a>`;
+    const link = `<a href="new-in.html?category=${encodeURIComponent(cat.slug)}">${escapeHtmlLocal(translateContentText(cat.name))}</a>`;
     if (!children.length) return link;
     return `
       <div class="nav-item-has-menu">
         ${link}
         <div class="nav-category-dropdown">
-          ${children.map((child) => `<a href="new-in.html?category=${encodeURIComponent(child.slug)}">${escapeHtmlLocal(child.name)}</a>`).join('')}
+          ${children.map((child) => `<a href="new-in.html?category=${encodeURIComponent(child.slug)}">${escapeHtmlLocal(translateContentText(child.name))}</a>`).join('')}
         </div>
       </div>
     `;
@@ -807,7 +811,7 @@ function renderOrderHistoryCard(order) {
         ${order.items.map((item) => `
           <div class="order-history-item">
             ${item.image ? `<img class="img-loading" src="${item.image}" ${IMG_LOADING_ATTRS}>` : '<div class="thumb-placeholder"></div>'}
-            <span>${escapeHtmlLocal(item.name)}${item.color ? ` (${escapeHtmlLocal(item.color)})` : ''} &times; ${item.quantity}</span>
+            <span>${escapeHtmlLocal(translateContentText(item.name))}${item.color ? ` (${escapeHtmlLocal(translateContentText(item.color))})` : ''} &times; ${item.quantity}</span>
           </div>
         `).join('')}
       </div>
@@ -819,7 +823,7 @@ function renderOrderHistoryCard(order) {
 async function loadOrderHistory(customerId) {
   const container = document.getElementById('orderHistoryList');
   if (!container) return;
-  const orders = await fetchJSON(`/api/customers/${customerId}/orders`);
+  const [orders] = await Promise.all([fetchJSON(`/api/customers/${customerId}/orders`), window.i18nReady]);
   container.innerHTML = orders.length
     ? orders.map(renderOrderHistoryCard).join('')
     : '<p class="account-empty-note">No orders yet.</p>';
@@ -833,7 +837,7 @@ async function loadBrowsingHistory() {
     container.innerHTML = '<p class="account-empty-note">No recently viewed products yet.</p>';
     return;
   }
-  const products = await fetchJSON('/api/products');
+  const [products] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
   const viewed = ids.map((id) => products.find((p) => p.id === id)).filter(Boolean);
   container.innerHTML = viewed.length
     ? viewed.map(renderProductCard).join('')
@@ -994,19 +998,18 @@ function initAccountModal() {
   async function ensureLocaleOptions() {
     if (localeOptionsLoaded || !localeSelect) return;
     localeOptionsLoaded = true;
-    const locales = await (await fetch('/api/locales')).json();
+    const locales = await (await fetch('/api/locales', { cache: 'no-store' })).json();
     localeSelect.innerHTML = locales
       .map((l) => `<option value="${l.code}">${escapeHtmlLocal(l.nativeName)}</option>`)
       .join('');
     localeSelect.value = getLocale();
   }
 
-  localeSelect?.addEventListener('change', async () => {
+  localeSelect?.addEventListener('change', () => {
     setLocale(localeSelect.value);
-    await applyLocale(localeSelect.value);
-    const headerLabel = document.getElementById('currentLocaleLabel');
-    const selectedOption = localeSelect.selectedOptions[0];
-    if (headerLabel && selectedOption) headerLabel.textContent = selectedOption.textContent;
+    // Reload rather than re-translating in place — see js/i18n.js's header
+    // switcher for why (product/category names need a fresh render pass).
+    window.location.reload();
   });
 
   function openAuthModal() {
@@ -1082,7 +1085,7 @@ async function renderCartDrawerContents() {
     return;
   }
 
-  const products = await fetchJSON('/api/products');
+  const [products] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
   let subtotal = 0;
   container.innerHTML = cart.map((item) => {
     const product = products.find((p) => p.id === item.productId);
@@ -1093,10 +1096,10 @@ async function renderCartDrawerContents() {
     subtotal += price * item.quantity;
     return `
       <div class="cart-drawer-line">
-        ${image ? `<img class="img-loading" src="${image}" alt="${escapeHtmlLocal(product.name)}" ${IMG_LOADING_ATTRS}>` : '<div class="thumb-placeholder"></div>'}
+        ${image ? `<img class="img-loading" src="${image}" alt="${escapeHtmlLocal(translateContentText(product.name))}" ${IMG_LOADING_ATTRS}>` : '<div class="thumb-placeholder"></div>'}
         <div>
-          <p class="cart-drawer-line-name">${escapeHtmlLocal(product.name)}</p>
-          ${sku ? `<p class="cart-drawer-line-color">${sku.color[0].toUpperCase() + sku.color.slice(1)}</p>` : ''}
+          <p class="cart-drawer-line-name">${escapeHtmlLocal(translateContentText(product.name))}</p>
+          ${sku ? `<p class="cart-drawer-line-color">${translateContentText(sku.color[0].toUpperCase() + sku.color.slice(1))}</p>` : ''}
           ${item.size ? `<p class="cart-drawer-line-color">${escapeHtmlLocal(item.size)}</p>` : ''}
           <p class="cart-drawer-line-price">${item.quantity} &times; $${price.toFixed(2)}</p>
         </div>

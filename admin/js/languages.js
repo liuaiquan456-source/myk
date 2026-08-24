@@ -29,6 +29,25 @@ const KEY_GROUPS = [
     'cart.fullName', 'cart.email', 'cart.shippingAddress', 'cart.orderNote', 'cart.placeOrder', 'cart.thankYou',
   ]],
   ['心愿单', ['wishlist.title', 'wishlist.empty', 'wishlist.startShopping']],
+  // Not fixed UI labels — a small word/phrase glossary that
+  // translateContentText() (js/i18n.js) uses to translate admin-entered
+  // CONTENT (product names, category names, section titles) on the fly,
+  // since those are free text with no key of their own. A phrase entry
+  // (spaces intact) is tried whole first; anything else falls back to
+  // per-word substitution, so most products need no entry at all — just
+  // the handful of real words their names are built from.
+  ['商品 / 分类词汇（自动翻译商品名用）', [
+    'word.new collection', 'word.shop now', 'word.elevate your everyday',
+    'word.new drops · every thursday', 'word.trending now', 'word.brand jewelry',
+    'word.ss jewelry', 'word.silver collection', 'word.stainless steel jewerly',
+    'word.stainless steel jewelry', 'word.earrings', 'word.earings', 'word.earing',
+    'word.erings', 'word.ring', 'word.rings', 'word.rig', 'word.necklace',
+    'word.necklcae', 'word.cklace', 'word.necklacee', 'word.bracelet', 'word.bracelets',
+    'word.bangle', 'word.clover', 'word.clovers', 'word.jewelry', 'word.jewerly',
+    'word.new', 'word.collection', 'word.now', 'word.chain', 'word.blue', 'word.flower',
+    'word.brand', 'word.stainless', 'word.steel', 'word.silver', 'word.trending',
+    'word.shop', 'word.gold', 'word.rose gold', 'word.black', 'word.white',
+  ]],
 ];
 
 let locales = [];
