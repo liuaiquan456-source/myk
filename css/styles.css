@@ -842,8 +842,34 @@ img.shop-by-image-photo,
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
   margin-top: 3rem;
+}
+
+.pagination-size {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.pagination-size select {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  background: #fff;
+  cursor: pointer;
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .pagination-btn {
@@ -867,15 +893,41 @@ img.shop-by-image-photo,
   color: var(--color-text);
 }
 
-.pagination-btn.active {
-  border-color: var(--color-text);
-  color: var(--color-text);
-  font-weight: 600;
-}
-
 .pagination-btn:disabled {
   opacity: 0.35;
   cursor: default;
+}
+
+.pagination-page-input {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.pagination-page-input input {
+  width: 3rem;
+  height: 2.2rem;
+  text-align: center;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: var(--color-text);
+  background: #fff;
+}
+
+/* Drop the native number-input spinner arrows — at 3rem wide they'd crowd
+   out the digits, and prev/next already cover single-step navigation. */
+.pagination-page-input input::-webkit-outer-spin-button,
+.pagination-page-input input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pagination-page-input input[type='number'] {
+  -moz-appearance: textfield;
 }
 
 /* UGC / Instagram 区 */

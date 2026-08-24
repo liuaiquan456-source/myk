@@ -243,34 +243,49 @@ async function renderNewIn() {
   let activeTag = '';
   const badgesPresent = [...new Set(products.map((p) => p.badge).filter(Boolean))];
 
-  // Page size is fixed rather than exposed as a control — the "Sort By" /
-  // "Filter" buttons next to it are still decorative placeholders too.
-  const PAGE_SIZE = 20;
+  // A numbered-button strip doesn't scale once the catalog is large enough
+  // to need dozens of pages — a page-size picker + jump-to-page input covers
+  // that without the row overflowing.
+  const PAGE_SIZE_OPTIONS = [20, 50, 100];
+  let pageSize = PAGE_SIZE_OPTIONS[0];
   let currentPage = 1;
   const paginationEl = document.getElementById('paginationControls');
 
+  function getFiltered() {
+    return activeTag ? products.filter((p) => p.badge === activeTag) : products;
+  }
+
   function renderPagination(totalPages) {
     if (!paginationEl) return;
-    if (totalPages <= 1) {
+    if (getFiltered().length <= PAGE_SIZE_OPTIONS[0]) {
       paginationEl.innerHTML = '';
       return;
     }
-    const pageBtns = Array.from({ length: totalPages }, (_, i) => i + 1)
-      .map((p) => `<button type="button" class="pagination-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`)
+    const sizeOptions = PAGE_SIZE_OPTIONS
+      .map((n) => `<option value="${n}" ${n === pageSize ? 'selected' : ''}>${n}</option>`)
       .join('');
     paginationEl.innerHTML = `
-      <button type="button" class="pagination-btn" data-page="prev" ${currentPage === 1 ? 'disabled' : ''} aria-label="Previous page">&larr;</button>
-      ${pageBtns}
-      <button type="button" class="pagination-btn" data-page="next" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Next page">&rarr;</button>
+      <div class="pagination-size">
+        <label for="pageSizeSelect" data-i18n="listing.show">Show</label>
+        <select id="pageSizeSelect">${sizeOptions}</select>
+      </div>
+      <div class="pagination-nav">
+        <button type="button" class="pagination-btn" data-page="prev" ${currentPage === 1 ? 'disabled' : ''} aria-label="Previous page">&larr;</button>
+        <span class="pagination-page-input">
+          <input type="number" id="paginationPageInput" min="1" max="${totalPages}" value="${currentPage}" inputmode="numeric">
+          <span>/ ${totalPages}</span>
+        </span>
+        <button type="button" class="pagination-btn" data-page="next" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Next page">&rarr;</button>
+      </div>
     `;
   }
 
   function renderGrid() {
-    const filtered = activeTag ? products.filter((p) => p.badge === activeTag) : products;
-    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    const filtered = getFiltered();
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     currentPage = Math.min(currentPage, totalPages);
-    const start = (currentPage - 1) * PAGE_SIZE;
-    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+    const start = (currentPage - 1) * pageSize;
+    const pageItems = filtered.slice(start, start + pageSize);
 
     grid.innerHTML = pageItems.length
       ? pageItems.map(renderListingProductCard).join('')
@@ -280,14 +295,34 @@ async function renderNewIn() {
     if (window.reapplyI18n) window.reapplyI18n();
   }
 
+  function goToPage(page) {
+    const totalPages = Math.max(1, Math.ceil(getFiltered().length / pageSize));
+    currentPage = Math.min(Math.max(1, Math.round(page) || 1), totalPages);
+    renderGrid();
+    document.querySelector('.page-header')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   paginationEl?.addEventListener('click', (e) => {
     const btn = e.target.closest('.pagination-btn');
     if (!btn || btn.disabled) return;
-    if (btn.dataset.page === 'prev') currentPage -= 1;
-    else if (btn.dataset.page === 'next') currentPage += 1;
-    else currentPage = Number(btn.dataset.page);
-    renderGrid();
-    document.querySelector('.page-header')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    goToPage(btn.dataset.page === 'prev' ? currentPage - 1 : currentPage + 1);
+  });
+
+  paginationEl?.addEventListener('change', (e) => {
+    if (e.target.id === 'pageSizeSelect') {
+      pageSize = Number(e.target.value);
+      currentPage = 1;
+      renderGrid();
+    } else if (e.target.id === 'paginationPageInput') {
+      goToPage(Number(e.target.value));
+    }
+  });
+
+  paginationEl?.addEventListener('keydown', (e) => {
+    if (e.target.id === 'paginationPageInput' && e.key === 'Enter') {
+      e.preventDefault();
+      goToPage(Number(e.target.value));
+    }
   });
 
   if (tagFilterBar) {
