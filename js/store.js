@@ -243,14 +243,52 @@ async function renderNewIn() {
   let activeTag = '';
   const badgesPresent = [...new Set(products.map((p) => p.badge).filter(Boolean))];
 
+  // Page size is fixed rather than exposed as a control — the "Sort By" /
+  // "Filter" buttons next to it are still decorative placeholders too.
+  const PAGE_SIZE = 20;
+  let currentPage = 1;
+  const paginationEl = document.getElementById('paginationControls');
+
+  function renderPagination(totalPages) {
+    if (!paginationEl) return;
+    if (totalPages <= 1) {
+      paginationEl.innerHTML = '';
+      return;
+    }
+    const pageBtns = Array.from({ length: totalPages }, (_, i) => i + 1)
+      .map((p) => `<button type="button" class="pagination-btn ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`)
+      .join('');
+    paginationEl.innerHTML = `
+      <button type="button" class="pagination-btn" data-page="prev" ${currentPage === 1 ? 'disabled' : ''} aria-label="Previous page">&larr;</button>
+      ${pageBtns}
+      <button type="button" class="pagination-btn" data-page="next" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Next page">&rarr;</button>
+    `;
+  }
+
   function renderGrid() {
     const filtered = activeTag ? products.filter((p) => p.badge === activeTag) : products;
-    grid.innerHTML = filtered.length
-      ? filtered.map(renderListingProductCard).join('')
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    currentPage = Math.min(currentPage, totalPages);
+    const start = (currentPage - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(start, start + PAGE_SIZE);
+
+    grid.innerHTML = pageItems.length
+      ? pageItems.map(renderListingProductCard).join('')
       : '<p style="grid-column: 1 / -1; color: var(--color-text-muted);">No products found.</p>';
     enhanceProductCards(grid);
+    renderPagination(totalPages);
     if (window.reapplyI18n) window.reapplyI18n();
   }
+
+  paginationEl?.addEventListener('click', (e) => {
+    const btn = e.target.closest('.pagination-btn');
+    if (!btn || btn.disabled) return;
+    if (btn.dataset.page === 'prev') currentPage -= 1;
+    else if (btn.dataset.page === 'next') currentPage += 1;
+    else currentPage = Number(btn.dataset.page);
+    renderGrid();
+    document.querySelector('.page-header')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
 
   if (tagFilterBar) {
     if (badgesPresent.length) {
@@ -263,6 +301,7 @@ async function renderNewIn() {
         tagFilterBar.querySelectorAll('.tag-filter-btn').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         activeTag = btn.dataset.tag;
+        currentPage = 1;
         renderGrid();
       });
     } else {
