@@ -5,6 +5,7 @@ const languageModal = document.getElementById('languageModal');
 const languageForm = document.getElementById('languageForm');
 
 const KEY_GROUPS = [
+  ['首页', ['hero.customInquiry']],
   ['导航栏 / 公告条', [
     'nav.bestsellers', 'nav.newIn', 'nav.shopBy', 'nav.necklaces', 'nav.bracelets',
     'nav.rings', 'nav.earrings', 'nav.collections', 'nav.aboutUs',
@@ -17,15 +18,17 @@ const KEY_GROUPS = [
     'footer.helpCenter', 'footer.shippingInfo', 'footer.returns', 'footer.faq', 'footer.contactUs',
     'footer.followUs', 'footer.newsletter', 'footer.emailPlaceholder', 'footer.subscribe', 'footer.copyright',
   ]],
-  ['商品列表页', ['listing.sortBy', 'listing.filter', 'listing.addToBag', 'listing.notifyMe']],
+  ['商品列表页', ['listing.sortBy', 'listing.filter', 'listing.addToBag', 'listing.notifyMe', 'listing.show']],
   ['商品详情页', [
     'pdp.color', 'pdp.size', 'pdp.addToBag', 'pdp.shipsWithin24', 'pdp.returns30', 'pdp.warranty100',
     'pdp.detailsMaterials', 'pdp.sizing', 'pdp.careInstructions', 'pdp.shippingReturns', 'pdp.reviews',
+    'pdp.frequentlyBoughtTogether', 'pdp.addSelectedToBag', 'pdp.totalPrice',
   ]],
   ['购物车 / 结账', [
     'cart.title', 'cart.empty', 'cart.continueShopping', 'cart.subtotal', 'cart.checkout',
-    'cart.fullName', 'cart.email', 'cart.shippingAddress', 'cart.placeOrder', 'cart.thankYou',
+    'cart.fullName', 'cart.email', 'cart.shippingAddress', 'cart.orderNote', 'cart.placeOrder', 'cart.thankYou',
   ]],
+  ['心愿单', ['wishlist.title', 'wishlist.empty', 'wishlist.startShopping']],
 ];
 
 let locales = [];
