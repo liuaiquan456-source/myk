@@ -67,9 +67,11 @@ function renderProductImage(product) {
 
   if (images[0]) {
     const altPhoto = images[1]
-      ? `<img class="product-image-alt-photo img-loading" src="${images[1]}" alt="" ${IMG_LOADING_ATTRS}>`
+      ? `<img class="product-image-alt-photo img-loading" src="${images[1]}" alt="" loading="lazy" decoding="async" ${IMG_LOADING_ATTRS}>`
       : '';
-    return `<div class="product-image img-loading"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}" ${CARD_IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
+    // loading="lazy": a listing page can have 40+ of these — only the ones
+    // near the viewport should compete for bandwidth at once.
+    return `<div class="product-image img-loading"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}" loading="lazy" decoding="async" ${CARD_IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
   }
   return `<div class="product-image ${colorsToPlaceholder(product.colors)}">${badgeHtml}</div>`;
 }
@@ -807,7 +809,7 @@ function renderAccountPage() {
         password: document.getElementById('loginPassword').value,
       });
       localStorage.setItem(CUSTOMER_STORAGE_KEY, JSON.stringify(c));
-      showAccountView(c);
+      window.location.href = 'index.html';
     } catch (err) {
       errorEl.textContent = err.message;
     }
