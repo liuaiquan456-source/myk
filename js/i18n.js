@@ -9,7 +9,11 @@ function setLocale(code) {
 }
 
 async function fetchTranslations(code) {
-  const res = await fetch(`/api/translations/${code}`);
+  // no-store: the admin can add/edit locales at any time, and a browser that
+  // cached this before a new language existed would otherwise keep serving
+  // that stale response indefinitely (fetch() honors HTTP caching by default
+  // same as any other resource — this isn't automatically bypassed).
+  const res = await fetch(`/api/translations/${code}`, { cache: 'no-store' });
   if (!res.ok) return {};
   return res.json();
 }
@@ -46,7 +50,7 @@ async function initLanguageSwitcher() {
   const label = document.getElementById('currentLocaleLabel');
   if (!trigger || !menu) return;
 
-  const locales = await (await fetch('/api/locales')).json();
+  const locales = await (await fetch('/api/locales', { cache: 'no-store' })).json();
   const current = getLocale();
   const currentLocale = locales.find((l) => l.code === current) || locales[0];
   if (label) label.textContent = currentLocale.nativeName;

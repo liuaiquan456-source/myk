@@ -703,6 +703,9 @@ app.delete('/api/currencies/:code', (req, res) => {
 // ---------- Languages ----------
 
 app.get('/api/locales', (req, res) => {
+  // The admin can add/edit languages at any time — never let a browser (or
+  // any proxy in between) hang on to a stale locale list or translation set.
+  res.set('Cache-Control', 'no-store');
   const db = load();
   res.json(db.locales);
 });
@@ -739,6 +742,7 @@ app.delete('/api/locales/:code', (req, res) => {
 });
 
 app.get('/api/translations/:code', (req, res) => {
+  res.set('Cache-Control', 'no-store');
   const db = load();
   const base = db.translations.en || {};
   const overrides = db.translations[req.params.code] || {};
