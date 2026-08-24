@@ -243,3 +243,30 @@ document.querySelectorAll('.password-toggle').forEach((btn) => {
     btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
   });
 });
+
+// The upload endpoint stores files as-is with no server-side processing (see
+// server/app.js), so this is the only place file size is controlled — resize
+// to a sane max dimension and re-encode before the file ever leaves the
+// browser. Falls back to the original file if anything here is unsupported
+// or doesn't actually help (e.g. an already-small image).
+async function compressImageFile(file, maxDimension = 1920, quality = 0.82) {
+  if (!file.type.startsWith('image/') || file.type === 'image/gif') return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, maxDimension / Math.max(bitmap.width, bitmap.height));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close?.();
+
+    const outType = file.type === 'image/png' || file.type === 'image/webp' ? file.type : 'image/jpeg';
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, outType, quality));
+    if (!blob || blob.size >= file.size) return file;
+
+    const name = file.name.replace(/\.\w+$/, '') + '.' + outType.split('/')[1];
+    return new File([blob], name, { type: outType });
+  } catch (e) {
+    return file;
+  }
+}

@@ -38,6 +38,12 @@ function minSkuPrice(product) {
 // they still fire for cached images, so there's no stuck shimmer.
 const IMG_LOADING_ATTRS = `onload="this.classList.remove('img-loading')" onerror="this.classList.remove('img-loading')"`;
 
+// Same as above, but also drops the shimmer from the wrapping .product-image
+// container. The photo itself sits at opacity:0 while .img-loading, which
+// would hide a shimmer painted on the <img> itself — so the visible shimmer
+// lives on the container instead, and both need clearing once the photo loads.
+const CARD_IMG_LOADING_ATTRS = `onload="this.classList.remove('img-loading'); this.closest('.product-image')?.classList.remove('img-loading')" onerror="this.classList.remove('img-loading'); this.closest('.product-image')?.classList.remove('img-loading')"`;
+
 // Elements that show a photo via CSS background-image (the PDP gallery, the
 // hero banner) have no native load event to hook into like <img> does, so we
 // preload off-DOM and only swap the real background in once it's ready —
@@ -63,7 +69,7 @@ function renderProductImage(product) {
     const altPhoto = images[1]
       ? `<img class="product-image-alt-photo img-loading" src="${images[1]}" alt="" ${IMG_LOADING_ATTRS}>`
       : '';
-    return `<div class="product-image"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}" ${IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
+    return `<div class="product-image img-loading"><img class="product-image-photo img-loading" src="${images[0]}" alt="${escapeHtmlLocal(product.name)}" ${CARD_IMG_LOADING_ATTRS}>${altPhoto}${badgeHtml}</div>`;
   }
   return `<div class="product-image ${colorsToPlaceholder(product.colors)}">${badgeHtml}</div>`;
 }
@@ -128,12 +134,14 @@ function renderCategoryBlockSection(block, products) {
 // ---------- Homepage ----------
 
 async function renderHomepage() {
-  const [layout, categories, allProducts] = await Promise.all([
-    fetchJSON('/api/layout'),
-    fetchJSON('/api/categories'),
-    fetchJSON('/api/products'),
-  ]);
-  const productsById = new Map(allProducts.map((p) => [p.id, p]));
+  // Fire all three immediately, but don't make the hero photo wait on the
+  // (usually much heavier) products/categories responses too — it only
+  // needs `layout`, so it starts downloading as soon as that alone resolves.
+  const layoutPromise = fetchJSON('/api/layout');
+  const categoriesPromise = fetchJSON('/api/categories');
+  const productsPromise = fetchJSON('/api/products');
+
+  const layout = await layoutPromise;
 
   document.getElementById('heroEyebrow').textContent = layout.hero.eyebrow || '';
   document.getElementById('heroHeading').textContent = layout.hero.heading || '';
@@ -142,14 +150,21 @@ async function renderHomepage() {
   if (layout.hero.image) {
     const heroEl = document.getElementById('heroFull');
     const overlay = 'linear-gradient(0deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.05) 45%, rgba(0, 0, 0, 0.15) 100%)';
+    // Same gradient .hero-full falls back to in CSS — keep it in the inline
+    // style too so setting backgroundImage here doesn't blank it out to just
+    // the overlay (which reads as a broken/empty section on a light page).
+    const fallbackGradient = 'linear-gradient(135deg, #cbb385 0%, #8fae94 45%, #4f7d8c 100%)';
     heroEl.style.backgroundSize = 'cover';
     heroEl.style.backgroundPosition = 'center';
-    // Overlay shows immediately (no network needed for a gradient) so the
-    // section never looks blank; the photo itself fades in once loaded.
+    // Overlay+gradient shows immediately (no network needed) so the section
+    // never looks blank; the photo itself fades in once loaded.
     // No shimmer here — a beige shimmer would fight the white hero text.
-    heroEl.style.backgroundImage = overlay;
+    heroEl.style.backgroundImage = `${overlay}, ${fallbackGradient}`;
     setBackgroundImageWhenLoaded(heroEl, layout.hero.image, `${overlay}, `, false);
   }
+
+  const [categories, allProducts] = await Promise.all([categoriesPromise, productsPromise]);
+  const productsById = new Map(allProducts.map((p) => [p.id, p]));
 
   const shopSection = document.getElementById('shopByCategorySection');
   const topLevelCategories = categories.filter((c) => !c.parentId);
@@ -848,7 +863,7 @@ function initCustomInquiryPage() {
     preview.innerHTML = '<p>Uploading&hellip;</p>';
     try {
       const formData = new FormData();
-      formData.append('image', file);
+      formData.append('image', await compressImageFile(file));
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Upload failed');
       const data = await res.json();

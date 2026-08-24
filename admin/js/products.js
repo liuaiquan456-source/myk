@@ -216,7 +216,7 @@ productImageInput.addEventListener('change', async () => {
   const files = [...productImageInput.files];
   for (const file of files) {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('image', await compressImageFile(file));
     try {
       const { url } = await api('/api/upload', { method: 'POST', body: formData });
       currentImages.push(url);
@@ -377,7 +377,7 @@ skuImageInput.addEventListener('change', async () => {
   const file = skuImageInput.files[0];
   if (!file || skuImageTargetIndex === null) return;
   const formData = new FormData();
-  formData.append('image', file);
+  formData.append('image', await compressImageFile(file));
   try {
     const { url } = await api('/api/upload', { method: 'POST', body: formData });
     currentSkus[skuImageTargetIndex].image = url;

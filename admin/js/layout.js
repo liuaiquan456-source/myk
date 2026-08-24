@@ -278,7 +278,7 @@ document.getElementById('productPickerConfirm').addEventListener('click', () => 
 heroImage.addEventListener('change', async () => {
   if (!heroImage.files[0]) return;
   const formData = new FormData();
-  formData.append('image', heroImage.files[0]);
+  formData.append('image', await compressImageFile(heroImage.files[0]));
   try {
     const { url } = await api('/api/upload', { method: 'POST', body: formData });
     heroImageUrl.value = url;
