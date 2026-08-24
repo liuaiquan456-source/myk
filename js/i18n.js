@@ -121,3 +121,16 @@ window.i18nReady = (async () => {
   await applyLocale(getLocale());
   initLanguageSwitcher();
 })();
+
+// store.js is loaded (and some of it runs, e.g. renderNavCategoryLinks())
+// *before* this script tag, so referencing window.i18nReady directly at that
+// point would just be undefined — Promise.all silently doesn't wait for a
+// non-promise value. Poll instead of assuming load order.
+function waitForI18nReady() {
+  return new Promise((resolve) => {
+    (function poll() {
+      if (window.i18nReady) resolve(window.i18nReady);
+      else setTimeout(poll, 0);
+    })();
+  });
+}

@@ -143,7 +143,7 @@ async function renderHomepage() {
   const categoriesPromise = fetchJSON('/api/categories');
   const productsPromise = fetchJSON('/api/products');
 
-  const [layout] = await Promise.all([layoutPromise, window.i18nReady]);
+  const [layout] = await Promise.all([layoutPromise, waitForI18nReady()]);
 
   document.getElementById('heroEyebrow').textContent = translateContentText(layout.hero.eyebrow || '');
   document.getElementById('heroHeading').textContent = translateContentText(layout.hero.heading || '');
@@ -213,7 +213,7 @@ async function renderHomepage() {
 const BADGE_FILTER_LABELS = { sale: 'Sale', 'low-stock': 'Low Stock', 'sold-out': 'Sold Out' };
 
 async function renderNewIn() {
-  await window.i18nReady;
+  await waitForI18nReady();
   const grid = document.getElementById('newInGrid');
   const heading = document.getElementById('pageHeading');
   const params = new URLSearchParams(window.location.search);
@@ -361,7 +361,7 @@ async function renderWishlistPage() {
     return;
   }
 
-  const [allProducts] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
+  const [allProducts] = await Promise.all([fetchJSON('/api/products'), waitForI18nReady()]);
   const products = ids.map((id) => allProducts.find((p) => p.id === id)).filter(Boolean);
 
   if (!products.length) {
@@ -454,7 +454,7 @@ async function renderProductDetail() {
   const [products, categories] = await Promise.all([
     fetchJSON('/api/products'),
     fetchJSON('/api/categories'),
-    window.i18nReady,
+    waitForI18nReady(),
   ]);
   if (!products.length) return;
 
@@ -617,7 +617,7 @@ async function renderCartPage() {
   emptyState.style.display = 'none';
   content.style.display = 'grid';
 
-  const [products] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
+  const [products] = await Promise.all([fetchJSON('/api/products'), waitForI18nReady()]);
   const lines = cart
     .map((item) => {
       const product = products.find((p) => p.id === item.productId);
@@ -748,7 +748,7 @@ async function renderNavCategoryLinks() {
   const navLinks = document.getElementById('navCategoryLinks');
   if (!navLinks) return;
 
-  const [categories] = await Promise.all([fetchJSON('/api/categories'), window.i18nReady]);
+  const [categories] = await Promise.all([fetchJSON('/api/categories'), waitForI18nReady()]);
   const topLevel = categories.filter((c) => !c.parentId);
 
   // Each root category with subcategories gets its own hover dropdown listing
@@ -768,7 +768,12 @@ async function renderNavCategoryLinks() {
   }).join('');
 }
 
-renderNavCategoryLinks();
+// Deferred to DOMContentLoaded rather than called immediately: this script
+// runs before js/i18n.js (loaded after it), so translateContentText() and
+// waitForI18nReady() — both defined there — don't exist yet at this point in
+// the file. DOMContentLoaded only fires once every script tag in the
+// document, i18n.js included, has finished executing.
+document.addEventListener('DOMContentLoaded', renderNavCategoryLinks);
 
 // ---------- Account page ----------
 
@@ -823,7 +828,7 @@ function renderOrderHistoryCard(order) {
 async function loadOrderHistory(customerId) {
   const container = document.getElementById('orderHistoryList');
   if (!container) return;
-  const [orders] = await Promise.all([fetchJSON(`/api/customers/${customerId}/orders`), window.i18nReady]);
+  const [orders] = await Promise.all([fetchJSON(`/api/customers/${customerId}/orders`), waitForI18nReady()]);
   container.innerHTML = orders.length
     ? orders.map(renderOrderHistoryCard).join('')
     : '<p class="account-empty-note">No orders yet.</p>';
@@ -837,7 +842,7 @@ async function loadBrowsingHistory() {
     container.innerHTML = '<p class="account-empty-note">No recently viewed products yet.</p>';
     return;
   }
-  const [products] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
+  const [products] = await Promise.all([fetchJSON('/api/products'), waitForI18nReady()]);
   const viewed = ids.map((id) => products.find((p) => p.id === id)).filter(Boolean);
   container.innerHTML = viewed.length
     ? viewed.map(renderProductCard).join('')
@@ -1085,7 +1090,7 @@ async function renderCartDrawerContents() {
     return;
   }
 
-  const [products] = await Promise.all([fetchJSON('/api/products'), window.i18nReady]);
+  const [products] = await Promise.all([fetchJSON('/api/products'), waitForI18nReady()]);
   let subtotal = 0;
   container.innerHTML = cart.map((item) => {
     const product = products.find((p) => p.id === item.productId);
