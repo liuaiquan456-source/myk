@@ -90,6 +90,10 @@
             <label>客服邮箱</label>
             <input type="text" id="contactEmail" placeholder="例如：support@mykjewelry.com">
           </div>
+          <div class="form-field">
+            <label>店铺地址</label>
+            <textarea id="contactAddress" rows="2" placeholder="例如：广东省深圳市罗湖区xxx路xxx号"></textarea>
+          </div>
           <div class="form-actions">
             <button type="button" class="btn btn-sm" id="saveContactBtn">保存</button>
           </div>
@@ -182,17 +186,19 @@
       document.getElementById('contactWhatsapp').value = layout.contactWhatsapp || '';
       document.getElementById('contactWechat').value = layout.contactWechat || '';
       document.getElementById('contactEmail').value = layout.contactEmail || '';
+      document.getElementById('contactAddress').value = layout.contactAddress || '';
     })();
 
     document.getElementById('saveContactBtn').addEventListener('click', async () => {
       try {
         // PUT /api/layout replaces the whole object, so fetch the current one
-        // first and only touch these three fields — otherwise this would
-        // wipe out the hero/blocks settings managed on the Layout page.
+        // first and only touch these fields — otherwise this would wipe out
+        // the hero/blocks settings managed on the Layout page.
         const layout = await api('/api/layout');
         layout.contactWhatsapp = document.getElementById('contactWhatsapp').value.trim();
         layout.contactWechat = document.getElementById('contactWechat').value.trim();
         layout.contactEmail = document.getElementById('contactEmail').value.trim();
+        layout.contactAddress = document.getElementById('contactAddress').value.trim();
         await api('/api/layout', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },

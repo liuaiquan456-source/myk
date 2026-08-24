@@ -6,6 +6,7 @@ const languageForm = document.getElementById('languageForm');
 
 const KEY_GROUPS = [
   ['首页', ['hero.customInquiry']],
+  ['联系方式悬浮卡片', ['contact.whatsapp', 'contact.wechat', 'contact.email', 'contact.address']],
   ['导航栏 / 公告条', [
     'nav.bestsellers', 'nav.newIn', 'nav.shopBy', 'nav.necklaces', 'nav.bracelets',
     'nav.rings', 'nav.earrings', 'nav.collections', 'nav.aboutUs',

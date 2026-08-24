@@ -1209,3 +1209,75 @@ async function initWhatsappFloat() {
 }
 
 initWhatsappFloat();
+
+// ---------- Floating contact-info card ----------
+// Same distributor-override idea as the WhatsApp button above, but as a
+// small expandable card covering WhatsApp/WeChat/email/address at once —
+// each field only overridden by the distributor's own value when they
+// actually have one set, otherwise it falls back to the store default.
+
+async function initContactWidget() {
+  const widget = document.getElementById('contactFloatWidget');
+  if (!widget) return;
+
+  const [layout, distributors] = await Promise.all([
+    fetchJSON('/api/layout'),
+    fetchJSON('/api/distributors'),
+  ]);
+
+  let whatsapp = layout.contactWhatsapp || '';
+  let wechat = layout.contactWechat || '';
+  let address = layout.contactAddress || '';
+  const email = layout.contactEmail || '';
+
+  const customer = getStoredCustomer();
+  if (customer && customer.buyerManager) {
+    const distributor = distributors.find((d) => d.name === customer.buyerManager);
+    if (distributor) {
+      if (distributor.whatsapp) whatsapp = distributor.whatsapp;
+      if (distributor.wechat) wechat = distributor.wechat;
+      if (distributor.address) address = distributor.address;
+    }
+  }
+
+  if (!whatsapp && !wechat && !email && !address) return;
+
+  const whatsappDigits = whatsapp.replace(/[^0-9]/g, '');
+  if (whatsappDigits) {
+    const row = document.getElementById('contactFloatWhatsapp');
+    row.querySelector('a').href = `https://wa.me/${whatsappDigits}`;
+    row.querySelector('a').textContent = whatsapp;
+    row.style.display = '';
+  }
+  if (wechat) {
+    const row = document.getElementById('contactFloatWechat');
+    row.querySelector('.contact-float-value').textContent = wechat;
+    row.style.display = '';
+  }
+  if (email) {
+    const row = document.getElementById('contactFloatEmail');
+    const link = row.querySelector('a');
+    link.href = `mailto:${email}`;
+    link.textContent = email;
+    row.style.display = '';
+  }
+  if (address) {
+    const row = document.getElementById('contactFloatAddress');
+    row.querySelector('.contact-float-value').textContent = address;
+    row.style.display = '';
+  }
+
+  widget.style.display = 'block';
+
+  const trigger = document.getElementById('contactFloatTrigger');
+  const panel = document.getElementById('contactFloatPanel');
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    panel.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    if (!widget.contains(e.target)) panel.classList.remove('open');
+  });
+}
+
+initContactWidget();
