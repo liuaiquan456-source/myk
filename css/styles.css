@@ -149,7 +149,12 @@ img {
   border-radius: 6px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
   min-width: 170px;
-  max-height: 280px;
+  /* Was a fixed 280px, sized for the original 8 languages — with more added
+     since, that clipped the last couple below the fold with no scroll
+     affordance, so they looked missing even though they worked if selected
+     another way (e.g. the account modal's native <select>). Scales with the
+     viewport instead of a fixed count. */
+  max-height: min(70vh, 420px);
   overflow-y: auto;
   display: none;
   z-index: 150;
